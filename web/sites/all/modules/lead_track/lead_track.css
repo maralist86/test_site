@@ -1,0 +1,398 @@
+@CHARSET "UTF-8";
+
+/*	
+
+
+
+ADMIN	
+
+
+
+
+*/
+
+/*
+Settings page
+*/
+#lead-track-admin-config .alert{
+	color: red;
+}
+.config-form table{
+	table-layout: fixed;
+	word-wrap: break-word;
+}
+
+/*
+Dashboard page
+*/
+#lead-track-form-dashboard-page #container_dashboard { /*width: 100%;*/
+
+}
+/*
+Dashboard page - Filter
+*/
+#container_dashboard #container_filter {
+	width: 15%;
+	float: left;
+}
+
+#container_dashboard #container_filter h2 {
+	margin-top: 0px;
+}
+
+/*
+Dashboard page - GraphView
+*/
+#container_dashboard #container_graphview {
+	width: 100%;
+}
+
+#container_dashboard #graphView {
+	width: 100%;
+	height: 500px;
+}
+#container_dashboard #pieView {
+	width: 100%;
+	height: 500px;
+}
+#container_dashboard #btn_switchGraph{
+	float: right;
+	margin-bottom: 15px;
+}
+
+/*
+Dashboard page - ListView
+*/
+#container_dashboard #container_listview {
+	float: none;
+	clear: both;
+	border-top: 1px dotted grey;
+}
+
+#container_dashboard #container_listview table {
+	max-width: 100%;
+}
+
+#container_dashboard #container_listview table th {
+	max-width: 15%;
+}
+
+
+/*
+New Dashboard
+*/
+.container-section {
+	width: 100%;
+}
+.container-section div.section-total th,
+.container-section div.section-total td,
+.container-section div.section-global th,
+.container-section div.section-global td{
+	text-align: center;
+}
+.container-section hr{
+	margin: 35px 0 20px;
+}
+.container-section table{
+	table-layout: fixed;
+	word-wrap: break-word;
+}
+.container-section div.tables-total{
+	width: 100%;
+	float: left;
+	/*margin-right: 1%;*/
+}
+.container-section div.subtables-total{
+	width: 34%;
+	float: left;
+	margin-right: 1%;
+}
+.container-section div.tables-visits,
+.container-section div.tables-urls{
+	width: 100%;
+}
+.container-section div.half{
+	width: 46%;
+	float: left;
+}
+.container-section div.half-first{
+	margin: 0 8% 0 0;
+}
+.container-section div.third{
+	width: 30%;
+	float: left;
+}
+.container-section div.third-first{
+	margin: 0 5% 0 0;
+}
+.container-section div.third-last{
+	margin: 0 0 0 5%;
+}
+.container-section div.fourth{
+	width: 22%;
+	float: left;
+	margin: 0 4% 0 0;
+}
+.container-section div.fourth-last{
+	margin: 0;
+}
+.container-section div.container-recent-events,
+.container-section div.container-recent-conversions{
+	width: 74%;
+}
+.container-section table.top-visitors,
+.container-section table.recent-events,
+.container-section table.recent-conversions{
+	table-layout: auto;
+}
+.container-section table.top-visitors td ul,
+.container-section table.recent-events td ul,
+.container-section table.recent-conversions td ul{
+	margin: 0;
+}
+.container-section table.top-visitors td li,
+.container-section table.recent-events td li,
+.container-section table.recent-conversions td li{
+	list-style: none;
+}
+.container-section table.top-visitors td li ul{
+	list-style: disc;
+	margin-left: 15px;
+}
+.container-section table.top-visitors td li ul li{
+	list-style: disc;
+	margin-left: 15px;
+}
+.container-section table td fieldset legend .fieldset-legend{
+	white-space: nowrap;
+	overflow: hidden;
+	width: 90%;
+}
+.container-section table td fieldset div{
+	overflow: hidden;
+	word-wrap: break-word;
+}
+.container-section table td fieldset div ul{
+	margin: 0;
+}
+.container-section div.container-graph{
+	float: left;
+}
+.container-section div.container-graph-medium{
+	width: 65%;
+}
+.container-section div.container-graph-large{
+	float: none;
+	margin:	10px 0;
+	width: 100%;
+	border-bottom: 1px dashed #CCC;
+}
+.container-section div.graph{
+	display:block; 
+	margin: 0 auto; 
+}
+.container-section tr.container-more{
+	display:none; 
+	border-bottom:1px solid black; 
+	border-top: 1px solid #CCC;
+}
+.container-section tr.container-more div{
+	text-align: center;
+}
+.container-section tr.container-more td.inner {
+	border-bottom: 1px solid #e1e2dc;
+	border-right: 1px solid #e1e2dc; 
+	padding: 4px;
+	text-align: center;
+}
+.container-section tr.container-more td.right {
+	border-right: 0;   
+}
+.container-section tr.container-more td.bottom {
+	border-bottom: 0;   
+}
+.container-section div.section-total .menu-period{
+	width: 45%;
+	float: right;
+	border: 1px solid black;
+	height: 100px;
+	text-align: center;
+}
+.container-section .menu-section{
+	margin: 50px auto;
+	width: 700px;
+}
+.container-section .menu ul{
+	width: 100%;
+}
+.container-section .menu ul li{
+	list-style: none;
+	display: inline-block;
+	text-align: center;
+}
+.container-section .menu ul li a{
+	cursor: pointer;
+	margin: 0 10px;
+	width: 100px;
+}
+.container-section .menu ul li a.active{
+	background: #0099C6;
+	color: #FFF;
+}
+.container-section .section-rank{
+	width: 40%;
+	text-align: center;
+	vertical-align: middle;
+	float: left;
+}
+.container-section .section-results{
+	width: 18%;
+	float: left;
+	text-align: left;
+	table-layout: fixed;
+	margin-left: 2%;
+	line-height: 30px;
+}
+.container-section .section-card{
+	width: 38%;
+	float: left;
+	margin-left: 2%;
+}
+.container-section .section-results table{
+	table-layout: auto;
+}
+.container-section .section-results tr{
+	height: 45px;
+}
+.container-section .section-results tr td{
+	text-align: center;
+}
+.container-section .section-rank th{
+	height: 143px;
+	text-align: center;
+}
+
+#container_dashboard .section-results{
+	width: 100%;
+	float: none;
+	text-align: center;
+	table-layout: auto;
+	margin-left: 0%;
+}
+#container_dashboard .section-results th{
+	height: 143px;
+	text-align: center;
+}
+
+#container_url .section-rank th{
+	height: 181px;
+}
+#container_url .section-results tr{
+	height: 73px;
+}
+#container_url div.container-recent-events,
+#container_url div.container-recent-conversions{
+	width: 100%;
+}
+
+/*	
+
+
+
+FRONT	
+
+
+
+
+*/
+
+
+/*
+User Tool page/tab
+*/
+#container_user_tool div.container-personal {
+	width: 49%;
+	float: left;
+	height: 180px;
+	margin-bottom: 25px;
+}
+
+#container_user_tool div.container-logs {
+	width: 49%;
+	float: left;
+}
+
+#container_user_tool div.container-other {
+	width: 100%;
+	clear: both;
+	float: none;
+}
+
+#container_user_tool div.container-other div.container-other-toggle {
+	width: 100%;
+}
+
+#container_user_tool div.container-other div.container-other-toggle p.extra-row
+{
+	width: 48%;
+	float: left;
+	margin: 10px 1%;
+}
+
+#drupal-data {
+	margin-top: 35px;
+}
+
+#container_user_tool div.container-drupal {
+	width: 100%;
+	float: none;
+	clear: both;
+}
+
+#container_user_tool div.container-analytics {
+	width: 100%;
+	float: none;
+	clear: both;
+	height: 250px;
+}
+
+
+/*	
+
+
+
+COMMON = ADMIN && FRONT
+
+
+
+
+*/
+
+/*
+Color
+@see /js/config.js
+*/
+.color-score{
+	color: blue;	
+}
+.color-url{
+	color: green;	
+}
+.color-ranking{
+	color: brown;	
+}
+.color-conversion{
+	color: red;	
+}
+.color-event{
+	color: orange;	
+}
+.color-visitor{
+	color: purple;	
+}
+.color-visit{
+	color: #0099C6;	
+}
+.color-campaign{
+	color: black;	
+}

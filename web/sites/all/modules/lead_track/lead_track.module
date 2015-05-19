@@ -1,0 +1,3438 @@
+<?php
+
+/*
+ * SLUG LENGTH
+ *
+ * @see lead_track_generate_slug()
+ */
+define('CONST_SLUG_LENGTH', 8);
+
+/*
+ * VISITOR ID LENGTH
+ *
+ * @see lead_track_generate_visitorID()
+ */
+define('CONST_VISITOR_ID_LENGTH', 16);
+
+//MISC
+define('CONST_TRACKING_TYPE_URL', 1);
+define('CONST_TRACKING_TYPE_SHORT_URL', 2);
+define('CONST_TRACKING_COOKIE_VISITOR_KEY', 'visitor');
+define('CONST_TRACKING_COOKIE_STATUS_KEY', 'status');
+define('CONST_TRACKING_COOKIE_STATUS_ACTIVE_VALUE', 1);
+define('CONST_TRACKING_COOKIE_STATUS_UNACTIVE_VALUE', 0);
+define('CONST_CONDITION_REGISTRATION', 'Registration');
+define('CONST_FIELD_NAME_SALESFORCE_MAPPING_DRUPAL', 'field_drupal_attr');
+define('CONST_FIELD_NAME_SALESFORCE_MAPPING_SF', 'field_salesforce_attr');
+
+//ADMIN URL TYPE
+define('CONST_ADMIN_URL_CAMPAIGNS', 10);
+define('CONST_ADMIN_URL_CAMPAIGNS_CAMPAIGN', 11);
+define('CONST_ADMIN_URL_CAMPAIGNS_CAMPAIGN_EDIT', 12);
+define('CONST_ADMIN_URL_CAMPAIGNS_CREATE', 13);
+define('CONST_ADMIN_URL_CAMPAIGNS_CAMPAIGN_DELETE', 14);
+define('CONST_ADMIN_URL_URLS', 20);
+define('CONST_ADMIN_URL_URLS_URL', 21);
+define('CONST_ADMIN_URL_URLS_URL_EDIT', 22);
+define('CONST_ADMIN_URL_URLS_CREATE', 23);
+define('CONST_ADMIN_URL_URLS_URL_DELETE', 24);
+
+//DATA TYPE
+define('CONST_DATA_TYPE_GLOBAL', 1);
+define('CONST_DATA_TYPE_CAMPAIGN', 2);
+define('CONST_DATA_TYPE_URL', 3);
+define('CONST_DATA_TYPE_LEAD', 4);
+
+//ANALYTICS
+define('CONST_ANALYTICS_COLLECT_URL', 'http://www.google-analytics.com/collect');
+define('CONST_ANALYTICS_COLLECT_VERSION', '1');
+
+//SQL TABLES
+define('CONST_SQL_TABLE_URL', 'lead_track_url');
+define('CONST_SQL_TABLE_CAMPAIGN', 'lead_track_campaign');
+define('CONST_SQL_TABLE_VISIT', 'lead_track_visit');
+define('CONST_SQL_TABLE_EVENT', 'lead_track_event');
+define('CONST_SQL_TABLE_RELATION', 'lead_track_relation');
+define('CONST_SQL_TABLE_CONVERSION', 'lead_track_conversion');
+define('CONST_SQL_TABLE_TRACKING_TMP', 'lead_track_tracking_tmp');
+
+//SQL COLUMNS
+define('CONST_SQL_COLUMN_URL_MEDIUM', 'analytics_medium');
+define('CONST_SQL_COLUMN_URL_CONTENT', 'analytics_content');
+define('CONST_SQL_COLUMN_URL_SOURCE', 'analytics_source');
+
+//ACCESS
+define('CONST_ACCESS_ADMIN', 'lead_track_admin_permission');
+define('CONST_ACCESS_USER_TOOL', 'lead_track_user_tool_access');
+define('CONST_ACCESS_CONFIG', 'lead_track_config_access');
+
+//SESSION KEYS
+define('LEAD_TRACK_SESSION_KEY_FILTER', 'lead_track_filter');
+
+//VARIABLE
+define('LEAD_TRACK_V_CONDITION_REGISTRATION_FOR_CONVERSION_ENABLE', 'lead_track_condition_registration_for_conversion_enable');
+define('LEAD_TRACK_V_CONVERSION_ENABLE', 'lead_track_conversion_enable');
+define('LEAD_TRACK_V_CONVERSION_COUNT_URL', 'lead_track_conversion_count_url');
+define('LEAD_TRACK_V_CONVERSION_URLS', 'lead_track_conversion_urls');
+define('LEAD_TRACK_V_CONVERSION_URLS_WITH_PATH', 'lead_track_conversion_urls_with_path');
+define('LEAD_TRACK_V_CONVERSION_URLS_REGEX', 'lead_track_conversion_urls_regex');
+define('LEAD_TRACK_V_EVENT_ENABLE', 'lead_track_event_enable');
+define('LEAD_TRACK_V_EVENT_COUNT_URL', 'lead_track_event_count_url');
+define('LEAD_TRACK_V_EVENT_URLS', 'lead_track_event_urls');
+define('LEAD_TRACK_V_EVENT_URLS_WITH_PATH', 'lead_track_event_urls_with_path');
+define('LEAD_TRACK_V_EVENT_URLS_REGEX', 'lead_track_event_urls_regex');
+define('LEAD_TRACK_V_GA_EVENT_ENABLE', 'lead_track_ga_event_enable');
+define('LEAD_TRACK_V_GA_TRACKING_ID', 'lead_track_ga_tracking_id');
+define('LEAD_TRACK_V_GA_CLIENT_ID', 'lead_track_ga_client_id');
+define('LEAD_TRACK_V_GA_EVENT_CATEGORY', 'lead_track_ga_event_category');
+define('LEAD_TRACK_V_GA_EVENT_ACTION', 'lead_track_ga_event_action');
+define('LEAD_TRACK_V_GA_EVENT_VALUE', 'lead_track_ga_event_value');
+define('LEAD_TRACK_V_GA_PAGEVIEW_ENABLE', 'lead_track_ga_pageview_enable');
+define('LEAD_TRACK_V_SF_ENABLE', 'lead_track_sf_enable');
+define('LEAD_TRACK_V_SF_URL', 'lead_track_sf_url');
+define('LEAD_TRACK_V_SF_OID', 'lead_track_sf_oid');
+define('LEAD_TRACK_V_SF_LEAD_SOURCE', 'lead_track_sf_lead_source');
+define('LEAD_TRACK_V_SF_MAPPING', 'lead_track_sf_mapping');
+define('LEAD_TRACK_V_GLOBAL_URL_FORMAT', 'lead_track_global_url_format');
+define('LEAD_TRACK_V_HTML_CONVERTER_PREVIEW', 'lead_track_html_converter_preview');
+define('LEAD_TRACK_V_GLOBAL_DEBUG_ENABLE', 'lead_track_global_debug_enable');
+define('LEAD_TRACK_V_GLOBAL_EXCLUDED_ROLES', 'lead_track_global_exclude_roles');
+define('LEAD_TRACK_V_GLOBAL_SCORE_COEF_VISIT', 'lead_track_global_score_coef_visit');
+define('LEAD_TRACK_V_GLOBAL_SCORE_COEF_EVENT', 'lead_track_global_score_coef_event');
+define('LEAD_TRACK_V_GLOBAL_SCORE_COEF_CONVERSION', 'lead_track_global_score_coef_conversion');
+
+//DEFAULT VALUES
+define('LEAD_TRACK_D_CONDITION_REGISTRATION_FOR_CONVERSION_ENABLE', FALSE);
+define('LEAD_TRACK_D_CONVERSION_ENABLE', FALSE);
+define('LEAD_TRACK_D_CONVERSION_COUNT_URL', 5);
+define('LEAD_TRACK_D_CONVERSION_URLS', '');
+define('LEAD_TRACK_D_CONVERSION_URLS_WITH_PATH', '');
+define('LEAD_TRACK_D_CONVERSION_URLS_REGEX', '');
+define('LEAD_TRACK_D_EVENT_ENABLE', FALSE);
+define('LEAD_TRACK_D_EVENT_URLS', '');
+define('LEAD_TRACK_D_EVENT_COUNT_URL', 5);
+define('LEAD_TRACK_D_EVENT_URLS_WITH_PATH', '');
+define('LEAD_TRACK_D_EVENT_URLS_REGEX', '');
+define('LEAD_TRACK_D_GA_EVENT_ENABLE', FALSE);
+define('LEAD_TRACK_D_GA_TRACKING_ID', 'UA-XXXXXX-X');
+define('LEAD_TRACK_D_GA_CLIENT_ID', '555');
+define('LEAD_TRACK_D_GA_EVENT_CATEGORY', 'Lead Track');
+define('LEAD_TRACK_D_GA_EVENT_ACTION', 'Redirect');
+define('LEAD_TRACK_D_GA_EVENT_VALUE', 0);
+define('LEAD_TRACK_D_GA_PAGEVIEW_ENABLE', 0);
+define('LEAD_TRACK_D_SF_ENABLE', FALSE);
+define('LEAD_TRACK_D_SF_URL', "http://www.salesforce.com/servlet/servlet.WebToLead");
+define('LEAD_TRACK_D_SF_OID', "00Dxxxxxxxxxxxx");
+define('LEAD_TRACK_D_SF_LEAD_SOURCE', "Website - Lead Track");
+define('LEAD_TRACK_D_SF_MAPPING', NULL);
+define('LEAD_TRACK_D_SF_CAMPAIGN_ENABLE', FALSE);
+define('LEAD_TRACK_D_HTML_CONVERTER_PREVIEW', NULL);
+define('LEAD_TRACK_D_GLOBAL_DEBUG_ENABLE', FALSE);
+define('LEAD_TRACK_D_GLOBAL_EXCLUDED_ROLES', NULL);
+define('LEAD_TRACK_D_GLOBAL_SCORE_COEF_VISIT', 1);
+define('LEAD_TRACK_D_GLOBAL_SCORE_COEF_EVENT', 2);
+define('LEAD_TRACK_D_GLOBAL_SCORE_COEF_CONVERSION', 5);
+define('LEAD_TRACK_D_GLOBAL_URL_FORMAT', 'l');
+
+//COOKIE_KEY
+define('LEAD_TRACK_COOKIE_KEY_TRACKING', 'lead_track_visit_tracking');
+
+/*
+ * Implements hook_init().
+ */
+
+function lead_track_init() {
+
+  module_load_include('inc', 'lead_track', 'lead_track.module');
+
+  $path = drupal_get_path('module', 'lead_track');
+
+  if (arg(0) == 'admin') {
+    drupal_add_css($path . '/lead_track.css');
+    drupal_add_js($path . '/js/lead_track.admin.js');
+    drupal_add_js($path . '/js/config.js');
+    drupal_add_js($path . '/js/bigtext.js');
+  }
+  else if (arg(0) == 'user') {
+    drupal_add_css($path . '/lead_track.css');
+    drupal_add_js($path . '/js/lead_track.admin.js');
+    drupal_add_js($path . '/js/config.js');
+    drupal_add_js($path . '/js/bigtext.js');
+  }
+}
+
+/*
+ * Implements hook_theme().
+ */
+
+function lead_track_theme($existing, $type, $theme, $path) {
+  return array(
+    'lead_track_graphview' => array(
+      // We use 'variables' when the item to be passed is an stdClass whose
+      // structure must be described here.
+      'variables' => array(
+        'data' => new stdClass(),
+      ),
+      'template' => 'templates/lead_track.graphview',
+    ),
+    'lead_track_user_tool' => array(
+      // We use 'variables' when the item to be passed is an stdClass whose
+      // structure must be described here.
+      'variables' => array(
+        'data' => new stdClass(),
+      ),
+      'template' => 'templates/lead_track.user_tool',
+    ),
+    'lead_track_new_dashboard' => array(
+      // We use 'variables' when the item to be passed is an stdClass whose
+      // structure must be described here.
+      'variables' => array(
+        'data' => new stdClass(),
+      ),
+      'template' => 'templates/lead_track.new_dashboard',
+    ),
+    'lead_track_campaign' => array(
+      // We use 'variables' when the item to be passed is an stdClass whose
+      // structure must be described here.
+      'variables' => array(
+        'data' => new stdClass(),
+      ),
+      'template' => 'templates/lead_track.campaign',
+    ),
+    'lead_track_url' => array(
+      // We use 'variables' when the item to be passed is an stdClass whose
+      // structure must be described here.
+      'variables' => array(
+        'data' => new stdClass(),
+      ),
+      'template' => 'templates/lead_track.url',
+    ),
+  );
+}
+
+/*
+ * Implement help hook
+ */
+
+function lead_track_help($path, $arg) {
+
+  switch ($path) {
+    case "admin/help#lead_track":
+      return '<p>' . t("Create a short url for your Email Analytics tracking") . '</p>';
+  }
+}
+
+/*
+ * Implement hook_block_info()
+ */
+
+function lead_track_block_info() {
+  $blocks['lead_track'] = array(
+    'info' => t('Lead Track'),
+    'cache' => DRUPAL_CACHE_PER_ROLE
+  );
+  return $blocks;
+}
+
+/*
+ * Implements hook_user_insert().
+ */
+
+function lead_track_user_insert(&$edit, $account, $category) {
+
+  $ready = FALSE;
+
+  //If the user registration is defined as a conversion AND the user has a Lead Track cookie
+  if (variable_get(LEAD_TRACK_V_CONDITION_REGISTRATION_FOR_CONVERSION_ENABLE, LEAD_TRACK_D_CONDITION_REGISTRATION_FOR_CONVERSION_ENABLE) && _lead_track_get_visitor_id_from_cookie() != NULL) {
+
+    $cookieData = json_decode($_COOKIE['Drupal_visitor_' . LEAD_TRACK_COOKIE_KEY_TRACKING]);
+
+    if (isset($cookieData->{CONST_TRACKING_COOKIE_STATUS_KEY}) && $cookieData->{CONST_TRACKING_COOKIE_STATUS_KEY} == CONST_TRACKING_COOKIE_STATUS_ACTIVE_VALUE) {
+      //The visitor is tracked and ready for a conversion
+      $ready = TRUE;
+    }
+  }
+
+  if ($ready) {
+
+    $visitor_id = _lead_track_get_visitor_id_from_cookie();
+
+    $user_id = $account->uid;
+
+    //grab all tracking line from tracking_tmp table ordered by timestamp where visitor_id == cookie visitor id AND/OR table uid == uid
+    $data = _lead_track_get_all_tracking_tmp($visitor_id, $user_id);
+    $data = $data->fetchAll();
+
+    if (!empty($data)) {
+
+      //Create a json object of the data with key (entry, urls, conversion)
+      $line = new stdClass();
+
+      $tracking = new stdClass();
+
+      //ENTRY -- First one
+      $tracking->entry = new stdClass();
+      $tracking->entry->type = $data[0]->type;
+      $tracking->entry->url = $data[0]->url;
+      $tracking->entry->timestamp = $data[0]->timestamp;
+      //Should be 1
+      $tracking->entry->isEntry = $data[0]->is_entry;
+      unset($data[0]);
+
+      //CONVERSION -- Last one
+      $lastItem = count($data);
+      $tracking->conversion = new stdClass();
+      $tracking->conversion->type = $data[$lastItem]->type;
+      $tracking->conversion->url = CONST_CONDITION_REGISTRATION;
+      $tracking->conversion->timestamp = $data[$lastItem]->timestamp;
+      $tracking->conversion->isEntry = $data[$lastItem]->is_entry;
+      unset($data[$lastItem]);
+
+      //URLS
+      $tracking->urls = array();
+      foreach ($data as $key => $value) {
+        $obj = new stdClass();
+        $obj->type = $value->type;
+        $obj->url = $value->url;
+        $obj->timestamp = $value->timestamp;
+        $obj->isEntry = $value->is_entry;
+
+        $tracking->urls[] = $obj;
+      }
+
+      //Other data
+      $line->uid = ($user_id != NULL) ? $user_id : 'NULL';
+      $line->visitor_id = $visitor_id;
+      $line->slug = $tracking->entry->url;
+      $line->timestamp = time();
+      $line->tracking = json_encode($tracking);
+
+      //Create a line in Conversion table
+      if (_lead_track_create_conversion($line)) {
+        if (_lead_track_isDebug()) {
+          watchdog('Lead Track - Internal Conversion Tracking', t('SUCCESS Creating a Conversion for @condition.', array('@condition' => 'user registration')), array(), WATCHDOG_DEBUG);
+        }
+      }
+      else {
+        watchdog('Lead Track - Internal Conversion Tracking', t('FAILED Creating a Conversion for @condition.', array('@condition' => 'user registration')), array(), WATCHDOG_ALERT);
+      }
+
+      //Delete all data from tracking_tmp table where visitor_id == cookie visitor id AND/OR table uid == uid
+      _lead_track_delete_all_tracking_tmp($visitor_id, $user_id);
+    }
+
+    //Clean Cookie || start new tracking?
+    _lead_track_set_cookie_status(CONST_TRACKING_COOKIE_STATUS_UNACTIVE_VALUE);
+  }
+}
+
+/*
+ * Implement hook_cron()
+ */
+
+function lead_track_cron() {
+
+  //get all visits where uid = NULL
+  $visits = _lead_track_get_anonymous_visits();
+  $total_visits_updated = array();
+  $total_events_updated = array();
+  $total_conversions_updated = array();
+
+  foreach ($visits as $visit) {
+
+    if ($visit->visitor_id == NULL) {
+      continue;
+    }
+
+    //find the uid in Relation, Visit and tracking_tmp using their visitor_id
+    $uid = _lead_track_retrieve_uid($visit->visitor_id);
+    //if uid is found
+    if ($uid != NULL) {
+      //update the uid
+      $visit->uid = $uid;
+
+      $res = false;
+
+      $res = db_update(CONST_SQL_TABLE_VISIT)
+          ->fields(array(
+            'uid' => $uid
+          ))
+          ->condition('visitor_id', $visit->visitor_id, '=')
+          ->execute();
+
+      if ($res) {
+        $total_visits_updated[] = $visit;
+      }
+
+      //update events
+      $res = db_update(CONST_SQL_TABLE_EVENT)
+          ->fields(array(
+            'uid' => $uid
+          ))
+          ->condition('vid', $visit->visitor_id, '=')
+          ->execute();
+
+      if ($res) {
+        $total_events_updated[] = $visit;
+      }
+
+      $res = db_update(CONST_SQL_TABLE_CONVERSION)
+          ->fields(array(
+            'uid' => $uid
+          ))
+          ->condition('vid', $visit->visitor_id, '=')
+          ->execute();
+
+      if ($res) {
+        $total_conversions_updated[] = $visit;
+      }
+    }
+  }
+
+  if (_lead_track_isDebug()) {
+
+    watchdog('Lead Track - Cron - Anonymous Visit', 'Visit:<br/><pre>@print_r</pre>', array('@print_r' => var_export($visit, TRUE)));
+
+    watchdog('Lead Track - Cron - Visits', 'Total visits updated:<br/><pre>@print_r</pre>', array('@print_r' => print_r($total_visits_updated, TRUE)));
+
+    watchdog('Lead Track - Cron - Events', 'Total events updated:<br/><pre>@print_r</pre>', array('@print_r' => print_r($total_events_updated, TRUE)));
+
+    watchdog('Lead Track - Cron - Conversions', 'Total conversions updated:<br/><pre>@print_r</pre>', array('@print_r' => print_r($total_conversions_updated, TRUE)));
+  }
+}
+
+/*
+ * Implement hook_load()
+ */
+
+function campaign_id_load($id) {
+
+  $res = _lead_track_campaign_by_id($id);
+  $campaign = $res->fetchObject();
+  return ($campaign) ? $campaign : NULL;
+}
+
+/*
+ * Implement hook_load()
+ */
+
+function url_id_load($id) {
+
+  $res = _lead_track_url_from_id($id);
+  return ($res) ? $res : NULL;
+}
+
+/*
+ * Implement hook_load()
+ */
+
+function slug_load($slug) {
+
+  $result = _lead_track_url($slug);
+  $url_array = $result->fetchAssoc();
+  return (empty($url_array)) ? NULL : $url_array;
+}
+
+/*
+ * Configuration page
+ */
+
+function lead_track_admin_config() {
+
+  $form = array();
+
+  $form['#attributes'] = array('class' => 'config-form');
+
+  //LEAD TRACK
+  //EVENTS
+  $form['lead_track_events'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Lead Track Events'),
+    '#collapsible' => TRUE,
+    '#collapsed' => !variable_get(LEAD_TRACK_V_EVENT_ENABLE, LEAD_TRACK_D_EVENT_ENABLE),
+  );
+
+  $form['lead_track_events'][LEAD_TRACK_V_EVENT_ENABLE] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Enable Lead Track to generate events.'),
+    '#default_value' => variable_get(LEAD_TRACK_V_EVENT_ENABLE, LEAD_TRACK_D_EVENT_ENABLE),
+    '#size' => 100,
+    '#description' => t("After the user reaches a Short Url, Lead Track will generate an event every time the user visits a url defined below."),
+    '#required' => FALSE,
+  );
+  
+  $form['lead_track_events'][LEAD_TRACK_V_EVENT_COUNT_URL] = array(
+    '#type' => 'textfield',
+    '#title' => t('Count of urls tracked'),
+    '#default_value' => variable_get(LEAD_TRACK_V_EVENT_COUNT_URL, LEAD_TRACK_D_EVENT_COUNT_URL),
+    '#size' => 20,
+    '#maxlength' => 50,
+    '#description' => t("The count of urls tracked/returned for an Event."),
+    '#required' => FALSE,
+  );
+
+  $form['lead_track_events'][LEAD_TRACK_V_EVENT_URLS] = array(
+    '#type' => 'textarea',
+    '#title' => t('Urls as Events'),
+    '#default_value' => variable_get(LEAD_TRACK_V_EVENT_URLS, LEAD_TRACK_D_EVENT_URLS),
+    '#size' => 100,
+    '#maxlength' => 255,
+    '#description' => t("The urls you want Lead Track to track as an Event."),
+    '#required' => FALSE,
+  );
+
+  //LEAD TRACK
+  //CONVERSIONS
+  $form['lead_track_conversions'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Lead Track Conversions'),
+    '#collapsible' => TRUE,
+    '#collapsed' => !variable_get(LEAD_TRACK_V_CONVERSION_ENABLE, LEAD_TRACK_D_CONVERSION_ENABLE),
+  );
+  $form['lead_track_conversions'][LEAD_TRACK_V_CONVERSION_ENABLE] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Enable Lead Track to generate conversions.'),
+    '#default_value' => variable_get(LEAD_TRACK_V_CONVERSION_ENABLE, LEAD_TRACK_D_CONVERSION_ENABLE),
+    '#size' => 100,
+    '#description' => t("After the user reaches a Short Url, Lead Track will generate a conversion as soon as the user visits a url defined below."),
+    '#required' => FALSE,
+  );
+  
+  $form['lead_track_conversions'][LEAD_TRACK_V_CONVERSION_COUNT_URL] = array(
+    '#type' => 'textfield',
+    '#title' => t('Count of urls tracked'),
+    '#default_value' => variable_get(LEAD_TRACK_V_CONVERSION_COUNT_URL, LEAD_TRACK_D_CONVERSION_COUNT_URL),
+    '#size' => 20,
+    '#maxlength' => 50,
+    '#description' => t("The count of urls tracked/returned for a Conversion."),
+    '#required' => FALSE,
+  );
+
+  $form['lead_track_conversions'][LEAD_TRACK_V_CONVERSION_URLS] = array(
+    '#type' => 'textarea',
+    '#title' => t('Urls as Conversions'),
+    '#default_value' => variable_get(LEAD_TRACK_V_CONVERSION_URLS, LEAD_TRACK_D_CONVERSION_URLS),
+    '#size' => 100,
+    '#maxlength' => 255,
+    '#description' => t("The urls you want Lead Track to track as a Conversion."),
+    '#required' => FALSE,
+  );
+
+  $form['lead_track_conversions'][LEAD_TRACK_V_CONDITION_REGISTRATION_FOR_CONVERSION_ENABLE] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Define a user registration as a Lead Track Conversion.'),
+    '#default_value' => variable_get(LEAD_TRACK_V_CONDITION_REGISTRATION_FOR_CONVERSION_ENABLE, LEAD_TRACK_D_CONDITION_REGISTRATION_FOR_CONVERSION_ENABLE),
+    '#size' => 100,
+    '#description' => t("The account creation for a tracked user will generate a Conversion named " . CONST_CONDITION_REGISTRATION . "."),
+    '#required' => FALSE,
+  );
+
+  //Google Analytics
+  $form['lead_track_analytics_fieldset'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Google Analytics Params'),
+    '#collapsible' => TRUE,
+    '#collapsed' => (!variable_get(LEAD_TRACK_V_GA_EVENT_ENABLE, LEAD_TRACK_D_GA_EVENT_ENABLE) || !variable_get(LEAD_TRACK_V_GA_PAGEVIEW_ENABLE, LEAD_TRACK_D_GA_PAGEVIEW_ENABLE)),
+  );
+
+  $form['lead_track_analytics_fieldset']['alert'] = array(
+    '#markup' => '<p class="alert"><strong>IMPORTANT : In order to track historic Lead Track Events And/Or PageViews in Google Analytics you must be using Universal Analytics</strong></p>',
+  );
+
+  $form['lead_track_analytics_fieldset']['delimiter_general'] = array(
+    '#markup' => '<hr/>',
+  );
+
+  $form['lead_track_analytics_fieldset']['subtitle_general'] = array(
+    '#markup' => '<h3>General</h3>',
+  );
+
+  $form['lead_track_analytics_fieldset'][LEAD_TRACK_V_GA_TRACKING_ID] = array(
+    '#type' => 'textfield',
+    '#title' => t('Property'),
+    '#default_value' => variable_get(LEAD_TRACK_V_GA_TRACKING_ID, LEAD_TRACK_D_GA_TRACKING_ID),
+    '#size' => 20,
+    '#maxlength' => 50,
+    '#description' => t("The Property which will receive the Events."),
+    '#required' => FALSE,
+  );
+
+  $form['lead_track_analytics_fieldset'][LEAD_TRACK_V_GA_CLIENT_ID] = array(
+    '#type' => 'textfield',
+    '#title' => t('Client ID'),
+    '#default_value' => variable_get(LEAD_TRACK_V_GA_CLIENT_ID, LEAD_TRACK_D_GA_CLIENT_ID),
+    '#size' => 20,
+    '#maxlength' => 50,
+    '#description' => t("Default Client ID when visitor\'s cookies is disable"),
+    '#required' => FALSE,
+  );
+
+  $form['lead_track_analytics_fieldset']['delimiter_events'] = array(
+    '#markup' => '<hr/>',
+  );
+
+  $form['lead_track_analytics_fieldset']['subtitle_events'] = array(
+    '#markup' => '<h3>Events</h3>',
+  );
+
+  $form['lead_track_analytics_fieldset'][LEAD_TRACK_V_GA_EVENT_ENABLE] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Enable Google Analytics Event Tracking for Lead Track short urls'),
+    '#default_value' => variable_get(LEAD_TRACK_V_GA_EVENT_ENABLE, LEAD_TRACK_D_GA_EVENT_ENABLE),
+    '#size' => 100,
+    '#description' => t("Allow Google Analytics to track Lead Track short urls as an Event."),
+    '#required' => FALSE,
+  );
+
+  $form['lead_track_analytics_fieldset'][LEAD_TRACK_V_GA_EVENT_CATEGORY] = array(
+    '#type' => 'textfield',
+    '#title' => t('Category of the Event'),
+    '#default_value' => variable_get(LEAD_TRACK_V_GA_EVENT_CATEGORY, LEAD_TRACK_D_GA_EVENT_CATEGORY),
+    '#size' => 20,
+    '#maxlength' => 50,
+    '#description' => t("The category of the Google Analytics Event."),
+    '#required' => FALSE,
+  );
+
+  $form['lead_track_analytics_fieldset'][LEAD_TRACK_V_GA_EVENT_ACTION] = array(
+    '#type' => 'textfield',
+    '#title' => t('Action of the Event'),
+    '#default_value' => variable_get(LEAD_TRACK_V_GA_EVENT_ACTION, LEAD_TRACK_D_GA_EVENT_ACTION),
+    '#size' => 20,
+    '#maxlength' => 50,
+    '#description' => t("The action of the Google Analytics Event."),
+    '#required' => FALSE,
+  );
+
+  $form['lead_track_analytics_fieldset'][LEAD_TRACK_V_GA_EVENT_VALUE] = array(
+    '#type' => 'textfield',
+    '#title' => t('Value of the Event'),
+    '#default_value' => variable_get(LEAD_TRACK_V_GA_EVENT_VALUE, LEAD_TRACK_D_GA_EVENT_VALUE),
+    '#size' => 2,
+    '#maxlength' => 8,
+    '#description' => t("The value of the Google Analytics Event."),
+    '#required' => FALSE,
+  );
+
+  $form['lead_track_analytics_fieldset']['delimiter_pageviews'] = array(
+    '#markup' => '<hr/>',
+  );
+
+  $form['lead_track_analytics_fieldset']['subtitle_pageviews'] = array(
+    '#markup' => '<h3>PageView</h3>',
+  );
+
+  $form['lead_track_analytics_fieldset'][LEAD_TRACK_V_GA_PAGEVIEW_ENABLE] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Enable Google Analytics PageView Tracking for Lead Track short urls'),
+    '#default_value' => variable_get(LEAD_TRACK_V_GA_PAGEVIEW_ENABLE, LEAD_TRACK_D_GA_PAGEVIEW_ENABLE),
+    '#size' => 100,
+    '#description' => t("Allow Google Analytics to track Lead Track short urls as a PageView."),
+    '#required' => FALSE,
+  );
+
+  //SalesForce
+  $form['lead_track_sf_fieldset'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('SalesForce Web-To-Lead Params'),
+    '#collapsible' => TRUE,
+    '#collapsed' => !variable_get(LEAD_TRACK_V_SF_ENABLE, LEAD_TRACK_D_SF_ENABLE),
+  );
+
+  $form['lead_track_sf_fieldset'][LEAD_TRACK_V_SF_ENABLE] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Enable Lead Track to send data to SalesForce'),
+    '#default_value' => variable_get(LEAD_TRACK_V_SF_ENABLE, LEAD_TRACK_D_SF_ENABLE),
+    '#size' => 100,
+    '#description' => t("Allow Lead Track to send a Lead to SalesForce every time a short url is reached."),
+    '#required' => FALSE,
+  );
+
+  $form['lead_track_sf_fieldset'][LEAD_TRACK_V_SF_OID] = array(
+    '#type' => 'textfield',
+    '#title' => t('Your SalesForce OID'),
+    '#default_value' => variable_get(LEAD_TRACK_V_SF_OID, LEAD_TRACK_D_SF_OID),
+    '#size' => 20,
+    '#maxlength' => 50,
+    '#description' => t("Your SalesForce Organization ID."),
+    '#required' => FALSE,
+  );
+
+  $form['lead_track_sf_fieldset'][LEAD_TRACK_V_SF_URL] = array(
+    '#type' => 'textfield',
+    '#title' => t('The url to send data to'),
+    '#default_value' => variable_get(LEAD_TRACK_V_SF_URL, LEAD_TRACK_D_SF_URL),
+    '#size' => 100,
+    '#maxlength' => 250,
+    '#description' => t("The SalesForce EndPoint to send data to."),
+    '#required' => FALSE,
+  );
+
+  $form['lead_track_sf_fieldset'][LEAD_TRACK_V_SF_LEAD_SOURCE] = array(
+    '#type' => 'textfield',
+    '#title' => t('The Lead Source'),
+    '#default_value' => variable_get(LEAD_TRACK_V_SF_LEAD_SOURCE, LEAD_TRACK_D_SF_LEAD_SOURCE),
+    '#size' => 20,
+    '#maxlength' => 50,
+    '#description' => t("The Lead Source to show in SalesForce for each Lead generated by this module."),
+    '#required' => FALSE,
+  );
+
+
+  //Saleforce Mapping
+  $select_options = array();
+  $select_options [] = '';
+
+  $wrapper = entity_get_property_info('user');
+  foreach ($wrapper['properties'] as $key => $property) {
+    $select_options[$key] = $property['label'];
+  }
+
+  $info_instances = field_info_instances('user');
+  foreach ($info_instances['user'] as $key => $field) {
+    $select_options[$key] = $field['label'];
+  }
+
+  $header = array('Drupal User Attribut', 'SalesForce Attribut');
+
+  //Use the Drupal Api to render the form into our page
+  $form['lead_track_sf_fieldset'][LEAD_TRACK_V_SF_MAPPING] = array(
+    '#theme' => 'table',
+    '#header' => $header,
+    '#rows' => array(),
+    '#empty' => '',
+    '#sticky' => TRUE,
+    '#prefix' => '',
+    '#suffix' => '',
+  );
+
+  $mapping_json = variable_get(LEAD_TRACK_V_SF_MAPPING, LEAD_TRACK_D_SF_MAPPING);
+  $mapping = ($mapping_json == LEAD_TRACK_D_SF_MAPPING) ? array() : json_decode($mapping_json);
+
+  $i = 0;
+  if (!empty($mapping)) {
+    foreach ($mapping as $key => $attrs) {
+
+      $field_drupal_attr = array(
+        '#id' => 'drupal_attr-' . $i,
+        '#type' => 'select',
+        '#options' => $select_options,
+        '#default_value' => $attrs->drupal,
+        '#required' => FALSE,
+      );
+
+      $field_salesforce_attr = array(
+        '#id' => 'salesforce_attr-' . $i,
+        '#type' => 'textfield',
+        '#default_value' => $attrs->salesforce,
+        '#required' => FALSE,
+        '#size' => 20,
+      );
+
+      $form['lead_track_sf_fieldset'][LEAD_TRACK_V_SF_MAPPING][] = array(
+        CONST_FIELD_NAME_SALESFORCE_MAPPING_DRUPAL . $i => &$field_drupal_attr,
+        CONST_FIELD_NAME_SALESFORCE_MAPPING_SF . $i => &$field_salesforce_attr,
+      );
+
+      $form['lead_track_sf_fieldset'][LEAD_TRACK_V_SF_MAPPING]['#rows'][] = array(
+        array('data' => &$field_drupal_attr),
+        array('data' => &$field_salesforce_attr),
+      );
+
+      unset($field_drupal_attr);
+      unset($field_salesforce_attr);
+
+      $i++;
+    }
+  }
+
+  for ($j = count($mapping); $j < (count($mapping) + 4); $j++) {
+    $field_drupal_attr = array(
+      '#id' => 'drupal_attr-' . $j,
+      '#type' => 'select',
+      '#options' => $select_options,
+      '#default_value' => '',
+      '#required' => FALSE,
+    );
+
+    $field_salesforce_attr = array(
+      '#id' => 'salesforce_attr-' . $j,
+      '#type' => 'textfield',
+      '#default_value' => '',
+      '#required' => FALSE,
+      '#size' => 20,
+    );
+
+    $form['lead_track_sf_fieldset'][LEAD_TRACK_V_SF_MAPPING][] = array(
+      CONST_FIELD_NAME_SALESFORCE_MAPPING_DRUPAL . $j => &$field_drupal_attr,
+      CONST_FIELD_NAME_SALESFORCE_MAPPING_SF . $j => &$field_salesforce_attr,
+    );
+
+    $form['lead_track_sf_fieldset'][LEAD_TRACK_V_SF_MAPPING]['#rows'][] = array(
+      array('data' => &$field_drupal_attr),
+      array('data' => &$field_salesforce_attr),
+    );
+
+    unset($field_drupal_attr);
+    unset($field_salesforce_attr);
+  }
+
+
+  //GLOBAL SETTINGS
+  $form['lead_track_global'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Global Settings'),
+    '#collapsible' => FALSE,
+    '#collapsed' => FALSE,
+  );
+
+  global $base_url;
+
+  $form['lead_track_global'][LEAD_TRACK_V_GLOBAL_URL_FORMAT] = array(
+    '#type' => 'textfield',
+    '#title' => t('Url Format'),
+    '#prefix' => '<p class="alert"><strong>IMPORTANT : Changing Url Format will result in losing the redirection for all the urls previously created</strong>.</p>',
+    '#default_value' => variable_get(LEAD_TRACK_V_GLOBAL_URL_FORMAT, LEAD_TRACK_D_GLOBAL_URL_FORMAT),
+    '#size' => 20,
+    '#description' => t("All the Lead Track will be using this format e.g: " . $base_url . "/%url_format/ followed by a random slug"),
+    '#required' => FALSE,
+  );
+
+  $form['lead_track_global'][LEAD_TRACK_V_GLOBAL_DEBUG_ENABLE] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Enable Debug Mode on Success'),
+    '#default_value' => variable_get(LEAD_TRACK_V_GLOBAL_DEBUG_ENABLE, LEAD_TRACK_D_GLOBAL_DEBUG_ENABLE),
+    '#size' => 100,
+    '#description' => t("Allow Lead Track to write logs on Success. Error will always write a log."),
+    '#required' => FALSE,
+  );
+
+  $var_roles = variable_get(LEAD_TRACK_V_GLOBAL_EXCLUDED_ROLES, LEAD_TRACK_D_GLOBAL_EXCLUDED_ROLES);
+  $roles = user_roles($membersonly = FALSE, $permission = NULL);
+  $form['lead_track_global'][LEAD_TRACK_V_GLOBAL_EXCLUDED_ROLES] = array(
+    '#type' => 'checkboxes',
+    '#title' => t('Exclude roles'),
+    '#options' => $roles,
+    '#default_value' => $var_roles,
+    '#size' => 20,
+    '#description' => t("The checked roles won't be tracked by Lead Track."),
+    '#required' => FALSE,
+  );
+
+  $form['lead_track_global'][LEAD_TRACK_V_GLOBAL_SCORE_COEF_VISIT] = array(
+    '#type' => 'textfield',
+    '#title' => t('Score linked for a visit'),
+    '#default_value' => variable_get(LEAD_TRACK_V_GLOBAL_SCORE_COEF_VISIT, LEAD_TRACK_D_GLOBAL_SCORE_COEF_VISIT),
+    '#size' => 20,
+    '#description' => t("The score value of a visit."),
+    '#required' => FALSE,
+  );
+  $form['lead_track_global'][LEAD_TRACK_V_GLOBAL_SCORE_COEF_EVENT] = array(
+    '#type' => 'textfield',
+    '#title' => t('Score linked for an event'),
+    '#default_value' => variable_get(LEAD_TRACK_V_GLOBAL_SCORE_COEF_EVENT, LEAD_TRACK_D_GLOBAL_SCORE_COEF_EVENT),
+    '#size' => 20,
+    '#description' => t("The score value of an event."),
+    '#required' => FALSE,
+  );
+  $form['lead_track_global'][LEAD_TRACK_V_GLOBAL_SCORE_COEF_CONVERSION] = array(
+    '#type' => 'textfield',
+    '#title' => t('Score linked for a conversion'),
+    '#default_value' => variable_get(LEAD_TRACK_V_GLOBAL_SCORE_COEF_CONVERSION, LEAD_TRACK_D_GLOBAL_SCORE_COEF_CONVERSION),
+    '#size' => 20,
+    '#description' => t("The score value of a conversion."),
+    '#required' => FALSE,
+  );
+
+  return system_settings_form($form);
+}
+
+/**
+ * Check the settings values sent by lead_track_admin_config()
+ *
+ * @param array $form
+ *
+ * @param array $form_state
+ * 	Where the values from the form are stored
+ *
+ * @return mixed
+ * 	A form_set_error() if the values are not complete
+ *
+ * @see lead_track_admin_config()
+ */
+function lead_track_admin_config_validate($form, &$form_state) {
+
+  if ($form_state['values'][LEAD_TRACK_V_EVENT_ENABLE] == 1) {
+
+    //Event Tracking is enabled
+
+    if (empty($form_state['values'][LEAD_TRACK_V_EVENT_URLS]) || $form_state['values'][LEAD_TRACK_V_EVENT_URLS] == LEAD_TRACK_D_EVENT_URLS) {
+
+      form_set_error(LEAD_TRACK_V_EVENT_URLS, t('You must enter at least one url as an Event.'));
+    }
+    else {
+
+      $eventUrls = $form_state['values'][LEAD_TRACK_V_EVENT_URLS];
+      $eventUrls = explode("\r\n", $eventUrls);
+      $sources = array();
+      $regex = array();
+      foreach ($eventUrls as $key => $url) {
+        $source = drupal_lookup_path('source', $url);
+        if ($source) {
+          $sources[] = $source;
+        }
+        $regex[] = '/^' . str_replace(array('/', '*'), array('\/', '.*'), $url) . '/';
+      }
+
+      $eventUrls = array_merge($eventUrls, $sources);
+
+      variable_set(LEAD_TRACK_V_EVENT_URLS_WITH_PATH, $eventUrls);
+      variable_set(LEAD_TRACK_V_EVENT_URLS_REGEX, $regex);
+    }
+  }
+
+  if ($form_state['values'][LEAD_TRACK_V_CONVERSION_ENABLE] == 1) {
+
+    //Event Tracking is enabled
+
+    if (empty($form_state['values'][LEAD_TRACK_V_CONVERSION_URLS]) || $form_state['values'][LEAD_TRACK_V_CONVERSION_URLS] == LEAD_TRACK_D_CONVERSION_URLS) {
+
+      form_set_error(LEAD_TRACK_V_CONVERSION_URLS, t('You must enter at least one url as a Conversion.'));
+    }
+    else {
+
+      $conversionUrls = $form_state['values'][LEAD_TRACK_V_CONVERSION_URLS];
+      $conversionUrls = explode("\r\n", $conversionUrls);
+      $sources = array();
+      $regex = array();
+      foreach ($conversionUrls as $key => $url) {
+        $source = drupal_lookup_path('source', $url);
+        if ($source) {
+          $sources[] = $source;
+        }
+        $regex[] = '/^' . str_replace(array('/', '*'), array('\/', '.*'), $url) . '/';
+      }
+
+      $conversionUrls = array_merge($conversionUrls, $sources);
+
+      variable_set(LEAD_TRACK_V_CONVERSION_URLS_WITH_PATH, $conversionUrls);
+      variable_set(LEAD_TRACK_V_CONVERSION_URLS_REGEX, $regex);
+    }
+  }
+
+  if ($form_state['values'][LEAD_TRACK_V_GA_EVENT_ENABLE] == 1 || $form_state['values'][LEAD_TRACK_V_GA_PAGEVIEW_ENABLE] == 1) {
+
+    //Analytics Tracking is enabled
+
+    if (empty($form_state['values'][LEAD_TRACK_V_GA_TRACKING_ID]) || $form_state['values'][LEAD_TRACK_V_GA_TRACKING_ID] == LEAD_TRACK_D_GA_TRACKING_ID) {
+
+      form_set_error(LEAD_TRACK_V_GA_TRACKING_ID, t('You must enter your Tracking ID.'));
+    }
+    else if (empty($form_state['values'][LEAD_TRACK_V_GA_EVENT_CATEGORY])) {
+
+      form_set_error(LEAD_TRACK_V_GA_EVENT_CATEGORY, t('You must enter a category for the Google Anlaytics Event.'));
+    }
+    else if (empty($form_state['values'][LEAD_TRACK_V_GA_EVENT_ACTION])) {
+
+      form_set_error(LEAD_TRACK_V_GA_EVENT_ACTION, t('You must enter an action for the Google Anlaytics Event.'));
+    }
+    else if (!is_numeric($form_state['values'][LEAD_TRACK_V_GA_EVENT_VALUE])) {
+
+      form_set_error(LEAD_TRACK_V_GA_EVENT_VALUE, t('You must enter a number for the value of the Google Anlaytics Event.'));
+    }
+  }
+
+  if ($form_state['values'][LEAD_TRACK_V_SF_ENABLE] == 1) {
+
+    //SalesForce Tracking is enabled
+
+    if (empty($form_state['values'][LEAD_TRACK_V_SF_OID]) || $form_state['values'][LEAD_TRACK_V_SF_OID] == LEAD_TRACK_D_SF_OID) {
+
+      form_set_error(LEAD_TRACK_V_SF_OID, t('You must enter your SalesForce Organization ID.'));
+    }
+    else if (empty($form_state['values'][LEAD_TRACK_V_SF_URL]) || !valid_url($form_state['values'][LEAD_TRACK_V_SF_URL], TRUE)) {
+
+      form_set_error(LEAD_TRACK_V_SF_URL, t('You must enter a valid URL.'));
+    }
+
+    //SalesForce Mapping
+    $pattern_salesforce_drupal_fields = CONST_FIELD_NAME_SALESFORCE_MAPPING_DRUPAL . "[0-9]";
+    $pattern_salesforce_sf_fields = CONST_FIELD_NAME_SALESFORCE_MAPPING_SF . "[0-9]";
+    $sf_mapping = array();
+    $i = 0;
+
+    foreach ($form_state['values'] as $field => $value) {
+
+      //Check for the right field
+      if (preg_match("/$pattern_salesforce_drupal_fields/siU", $field)) {
+        //Drupal Attribut
+        $sf_mapping[$i]['drupal'] = $value;
+      }
+      else if (preg_match("/$pattern_salesforce_sf_fields/siU", $field)) {
+        //SalesForce Attribut						
+        $sf_mapping[$i]['salesforce'] = $value;
+      }
+
+      //Important - implement $i after both values are added to $sf_mapping
+      if (isset($sf_mapping[$i]['drupal']) && isset($sf_mapping[$i]['salesforce'])) {
+
+        //Check data
+        if ($sf_mapping[$i]['drupal'] == '0' && empty($sf_mapping[$i]['salesforce'])) {
+          unset($sf_mapping[$i]);
+        }
+        else {
+          $i++;
+        }
+      }
+    }
+
+    if (!empty($sf_mapping)) {
+      $form_state['values'][LEAD_TRACK_V_SF_MAPPING] = json_encode($sf_mapping);
+    }
+  }
+}
+
+/**
+ * Implements hook_menu().
+ */
+function lead_track_menu() {
+  $items = array();
+
+  $urlFormat = variable_get(LEAD_TRACK_V_GLOBAL_URL_FORMAT, LEAD_TRACK_D_GLOBAL_URL_FORMAT);
+
+  //The shortest front url callback
+  $items[$urlFormat . '/%slug'] = array(
+    'title' => 'Lead Track',
+    'page callback' => 'lead_track_landing_page',
+    'page arguments' => array(1),
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK
+  );
+  //The front url callback
+  $items[$urlFormat . '/%slug/%'] = array(
+    'title' => 'Lead Track',
+    'page callback' => 'lead_track_landing_page',
+    'page arguments' => array(1),
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK
+  );
+
+  //Add the tab to the user account view
+  $items['user/%user/tracking'] = array(
+    'type' => MENU_LOCAL_TASK,
+    'title' => t('Lead Track User Tool'),
+    'page callback' => 'lead_track_user_tool_page',
+    'page arguments' => array(1),
+    'access callback' => 'lead_track_user_tool_access',
+    'file' => 'lead_track.admin.user_tool.pages.inc',
+    'file path' => drupal_get_path('module', 'lead_track'),
+    'weight' => 100,
+  );
+
+  //
+  // CONFIG
+  $items['admin/config/lead_track'] = array(
+    'title' => 'Lead Track module settings',
+    'description' => 'Settings for your Lead Track module',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('lead_track_admin_config'),
+    'access callback' => 'lead_track_config_access',
+  );
+
+
+
+  $items['admin/lead_track'] = array(
+    'title' => 'Lead Track',
+    'description' => 'Overview of Lead Track actions',
+    'type' => MENU_NORMAL_ITEM,
+    'weight' => 30,
+    'page callback' => 'lead_track_new_dashboard_page',
+    'access callback' => 'lead_track_admin_access',
+    'file' => 'lead_track.admin.pages.inc',
+    'file path' => drupal_get_path('module', 'lead_track'),
+  );
+  $items['admin/lead_track/home'] = array(
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'title' => 'Home',
+    'weight' => 1,
+  );
+
+  //
+  // CAMPAIGNS
+  $items["admin/lead_track/campaigns"] = array(
+    'type' => MENU_LOCAL_TASK,
+    'title' => t('Campaigns'),
+    'page callback' => 'lead_track_campaigns_page',
+    'access callback' => 'lead_track_admin_access',
+    'weight' => 2,
+  );
+  $items["admin/lead_track/campaigns/create"] = array(
+    //MENU_LOCAL_ACTION to add the link "+Create Campaign" in admin/lead_track/campaigns
+    'type' => MENU_LOCAL_ACTION,
+    'title' => t('Create Campaign'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('lead_track_form_create_campaign'),
+    'access callback' => 'lead_track_admin_access',
+  );
+  $items["admin/lead_track/campaigns/%campaign_id"] = array(
+    'type' => MENU_NORMAL_ITEM,
+    'title' => 'Campaign',
+    'page callback' => 'lead_track_campaign_page',
+    'access callback' => 'lead_track_admin_access',
+    'page arguments' => array(3),
+    'file' => 'lead_track.admin.pages.inc',
+    'file path' => drupal_get_path('module', 'lead_track'),
+  );
+  $items["admin/lead_track/campaigns/%campaign_id/edit"] = array(
+    'type' => MENU_LOCAL_ACTION,
+    'title' => t('Edit Campaign'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('lead_track_form_create_campaign'),
+    'access callback' => 'lead_track_admin_access',
+  );
+
+  $items["admin/lead_track/campaigns/%campaign_id/add-url"] = array(
+    'type' => MENU_LOCAL_ACTION,
+    'title' => t('Add Url'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('lead_track_form_create_url'),
+    'access callback' => 'lead_track_admin_access',
+  );
+
+  //
+  // URLS
+  $items["admin/lead_track/urls"] = array(
+    'type' => MENU_LOCAL_TASK,
+    'title' => t('Urls'),
+    'page callback' => 'lead_track_urls_page',
+    'access callback' => 'lead_track_admin_access',
+    'weight' => 3,
+  );
+  $items["admin/lead_track/urls/create"] = array(
+    //MENU_LOCAL_ACTION to add the link "+Create Campaign" in admin/lead_track/campaigns
+    'type' => MENU_LOCAL_ACTION,
+    'title' => t('Create Url'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('lead_track_form_create_url'),
+    'access callback' => 'lead_track_admin_access',
+  );
+  $items["admin/lead_track/urls/%url_id"] = array(
+    'type' => MENU_NORMAL_ITEM,
+    'title' => 'Url',
+    'page callback' => 'lead_track_url_page',
+    'access callback' => 'lead_track_admin_access',
+    'page arguments' => array(3),
+    'file' => 'lead_track.admin.pages.inc',
+    'file path' => drupal_get_path('module', 'lead_track'),
+  );
+  $items["admin/lead_track/urls/%url_id/edit"] = array(
+    'type' => MENU_NORMAL_ITEM,
+    'title' => t('Edit Url'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('lead_track_form_create_url'),
+    'access callback' => 'lead_track_admin_access',
+  );
+
+  //
+  // HTML Converter
+  $items["admin/lead_track/html_converter"] = array(
+    'type' => MENU_LOCAL_TASK,
+    'title' => t('HTML Converter'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('lead_track_form_html_converter_page'),
+    'access callback' => 'lead_track_admin_access',
+    'file' => 'lead_track.admin.pages.inc',
+    'file path' => drupal_get_path('module', 'lead_track'),
+    'weight' => 5,
+  );
+  $items["admin/lead_track/html_converter/preview"] = array(
+    'type' => MENU_NORMAL_ITEM,
+    'title' => t('HTML Converter - Preview'),
+    'page callback' => 'lead_track_html_converter_preview',
+    'access callback' => 'lead_track_admin_access',
+    'file' => 'lead_track.admin.pages.inc',
+    'file path' => drupal_get_path('module', 'lead_track'),
+  );
+
+  //
+  // SETTINGS - TAB
+  $items["admin/lead_track/settings"] = array(
+    'type' => MENU_LOCAL_TASK,
+    'title' => t('Settings'),
+    'description' => 'Settings for your Lead Track module',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('lead_track_admin_config'),
+    'access callback' => 'lead_track_config_access',
+    'weight' => 6,
+  );
+
+  /*
+    AUTO-COMPLETE URLS
+   */
+  $items['admin/lead_track/autocomplete/%/%/%'] = array(
+    'page callback' => 'lead_track_autocomplete',
+    'access callback' => 'lead_track_admin_access',
+    'type' => MENU_CALLBACK,
+    'page arguments' => array(3, 4, 5),
+  );
+
+  //Manage . to list all options
+  $items['admin/lead_track/autocomplete/%/%'] = array(
+    'page callback' => 'lead_track_autocomplete',
+    'access callback' => 'lead_track_admin_access',
+    'type' => MENU_CALLBACK,
+    'page arguments' => array(3, 4),
+  );
+
+  return $items;
+}
+
+/**
+ * Returns the various permission for the module.
+ *
+ * The permissions are used in admin/people/permissions
+ *
+ *
+ * @return array
+ * 	An array containing all the possible permissions for the module
+ *
+ * @see lead_track_admin_access()
+ */
+function lead_track_permission() {
+  return array(
+    CONST_ACCESS_ADMIN => array(
+      'title' => t('Administer Lead Track'),
+      'description' => t('Allow people to access to Lead Track administration side.'),
+    ),
+    CONST_ACCESS_USER_TOOL => array(
+      'title' => t('Access to Lead Track User Tool'),
+      'description' => t('Allow people to access to Lead Track User Tool view.'),
+    ),
+    CONST_ACCESS_CONFIG => array(
+      'title' => t('Access to Lead Track Configuration'),
+      'description' => t('Allow people to access to Lead Track Configuration.'),
+    ),
+  );
+}
+
+/**
+ * Returns boolean according to user rights.
+ *
+ * Allow access to the page only if the user has the permission.
+ *
+ *
+ * @return boolean
+ * 	TRUE if user has the right permission; Otherwise FALSE;
+ *
+ * @see lead_track_permission()
+ */
+function lead_track_admin_access() {
+
+  if (user_access(CONST_ACCESS_ADMIN)) {
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+/**
+ * Returns boolean according to user rights.
+ *
+ * Allow access to the page only if the user has the permission.
+ *
+ *
+ * @return boolean
+ * 	TRUE if user has the right permission; Otherwise FALSE;
+ *
+ * @see lead_track_permission()
+ */
+function lead_track_user_tool_access() {
+
+  if (user_access(CONST_ACCESS_USER_TOOL)) {
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+/**
+ * Returns boolean according to user rights.
+ *
+ * Allow access to the page only if the user has the permission.
+ *
+ *
+ * @return boolean
+ * 	TRUE if user has the right permission; Otherwise FALSE;
+ *
+ * @see lead_track_permission()
+ */
+function lead_track_config_access() {
+
+  if (user_access(CONST_ACCESS_CONFIG)) {
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+function lead_track_boot() {
+
+  include('lead_track.module.inc');
+
+  if (isset($_COOKIE['Drupal_visitor_' . LEAD_TRACK_COOKIE_KEY_TRACKING])) {
+
+    $cookieData = json_decode($_COOKIE['Drupal_visitor_' . LEAD_TRACK_COOKIE_KEY_TRACKING]);
+
+    if (!isset($cookieData->{CONST_TRACKING_COOKIE_VISITOR_KEY}) || !isset($cookieData->{CONST_TRACKING_COOKIE_STATUS_KEY}) || $cookieData->{CONST_TRACKING_COOKIE_VISITOR_KEY} === NULL || !in_array($cookieData->{CONST_TRACKING_COOKIE_STATUS_KEY}, array(CONST_TRACKING_COOKIE_STATUS_ACTIVE_VALUE, CONST_TRACKING_COOKIE_STATUS_UNACTIVE_VALUE))) {
+
+      if (_lead_track_isDebug()) {
+        watchdog('Lead Track - Cookie', 'CLEAN unvalid cookie : ' . json_encode($cookieData));
+      }
+
+      //This cookie structure needs to be cleaned
+      setrawcookie('Drupal.visitor.' . LEAD_TRACK_COOKIE_KEY_TRACKING, '', REQUEST_TIME - 3600, '/');
+    }
+  }
+
+  if (db_table_exists(CONST_SQL_TABLE_RELATION)) {
+
+    //Check if user is logged in
+    global $user;
+    if ($user->uid > 0) {
+      //Check if the user has a relation with a Lead Track Visitor_ID
+      $result = _lead_track_get_relation(NULL, $user->uid);
+      $result = $result->fetchAssoc();
+      if (!$result) {
+        //No relation yet
+
+        $result = _lead_track_get_visitor_id_from_cookie();
+        //get visitor_id from cookie if available otherwise generate a new one
+        $visitor_id = ($result != NULL) ? $result : _lead_track_generate_visitorID();
+        _lead_track_create_relation($user->uid, $visitor_id);
+      }
+      else {
+        //Check the visitorID is the right one
+        //Get visitor id from cookie
+        $visitor_id = _lead_track_get_visitor_id_from_cookie();
+
+        if ($visitor_id != NULL && $result['vid'] != $visitor_id) {
+          _lead_track_update_cookie($result['vid'], _lead_track_get_cookie_status());
+
+          //update the uid in visits
+          $res = db_update(CONST_SQL_TABLE_VISIT)
+              ->fields(array(
+                'visitor_id' => $result['vid']
+              ))
+              ->condition('visitor_id', $visitor_id, '=')
+              ->execute();
+
+          //update events
+          $res = db_update(CONST_SQL_TABLE_EVENT)
+              ->fields(array(
+                'vid' => $result['vid']
+              ))
+              ->condition('vid', $visitor_id, '=')
+              ->execute();
+
+          //update conversion
+          $res = db_update(CONST_SQL_TABLE_CONVERSION)
+              ->fields(array(
+                'vid' => $result['vid']
+              ))
+              ->condition('vid', $visitor_id, '=')
+              ->execute();
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_page_alter().
+ */
+function lead_track_page_alter(&$page) {
+
+  //Use to track visitor for the event feature
+  try {
+
+    //////////////////////////////////////////////////////////
+    //VISIT TRACKING PART - START
+    //Admin pages are not tracked
+    if (arg(0) != 'admin' && (variable_get(LEAD_TRACK_V_EVENT_ENABLE, LEAD_TRACK_D_EVENT_ENABLE) || variable_get(LEAD_TRACK_V_CONVERSION_ENABLE, LEAD_TRACK_D_CONVERSION_ENABLE))) {
+
+      //If not in admin and if Event Tracking OR Conversion Tracking is enable				
+
+      global $base_url;
+
+      //check If Short Url
+      $isShortUrl = FALSE;
+
+      if (strpos($_GET['q'], 'l/') !== FALSE) {
+        $exploded = explode("/", $_GET['q']);
+        $slug = $exploded[1];
+
+        //check if short url exists
+        $result = _lead_track_url($slug);
+        $res = $result->fetchAssoc();
+        $isShortUrl = !empty($res);
+        $url = $res['slug'];
+      }
+      else {
+        $url = $base_url . '/' . $_GET['q'];
+      }
+
+      global $user;
+      $user_id = $user->uid;
+
+      $trackIt = FALSE;
+      $visitor_id = NULL;
+
+      if (!$isShortUrl) {
+        //Short Urls are managed by the function _lead_track_landing_page
+        //If cookie exists
+        if (isset($_COOKIE['Drupal_visitor_' . LEAD_TRACK_COOKIE_KEY_TRACKING]) && $_COOKIE['Drupal_visitor_' . LEAD_TRACK_COOKIE_KEY_TRACKING] != 'null') {
+
+          $cookieData = json_decode($_COOKIE['Drupal_visitor_' . LEAD_TRACK_COOKIE_KEY_TRACKING]);
+
+          if (isset($cookieData->{CONST_TRACKING_COOKIE_STATUS_KEY}) && $cookieData->{CONST_TRACKING_COOKIE_STATUS_KEY} == CONST_TRACKING_COOKIE_STATUS_ACTIVE_VALUE) {
+            //Keep Tracking the visitor
+            $trackIt = TRUE;
+          }
+
+          $visitor_id = _lead_track_get_visitor_id_from_cookie();
+
+          if ($user_id == 0) {
+
+            //Try to retrieve the uid using the CONST_VISITOR_ID
+            $user_id = _lead_track_retrieve_uid($visitor_id);
+            //$user = ($user_id != NULL)? user_load($user_id) : $user;
+          }
+        }
+        else if ($user_id > 0) {
+          //If TRUE, Check if we already have a visitorID for the user		
+          $vid = _lead_track_retrieve_visitor_id($user_id);
+
+          if ($vid != NULL && _lead_track_isTracked($user_id) != FALSE) {
+            //If TRUE keep tracking it
+            $trackIt = TRUE;
+
+            $visitor_id = $vid;
+
+            //Update Cookie
+            _lead_track_update_cookie($vid, CONST_TRACKING_COOKIE_STATUS_ACTIVE_VALUE);
+          }
+          else if ($vid != NULL) {
+            //If we have the visitorID in DB but the user is not tracked
+            //Update Cookie with visitorID and set it unactive (not tracked)
+            _lead_track_update_cookie($vid, CONST_TRACKING_COOKIE_STATUS_UNACTIVE_VALUE);
+          }
+        }
+
+        if ($trackIt) {
+
+          $user_type = ($user_id > 0) ? $user_id : 'NULL';
+
+          $tmp_line = new stdClass();
+
+          //Get visitor ID from COOKIE
+          $tmp_line->visitor_id = ($visitor_id == NULL) ? _lead_track_get_visitor_id_from_cookie() : $visitor_id;
+          //IMPORTANT
+          $tmp_line->isEntry = 0;
+          $tmp_line->timestamp = time();
+          $tmp_line->uid = $user_type;
+          $tmp_line->url = $url;
+          $tmp_line->type = CONST_TRACKING_TYPE_URL;
+
+          $user_type = ($user_id > 0) ? $user_id : 'Anonymous';
+
+          //Add line in tmp table
+          if (_lead_track_create_tracking_tmp($tmp_line)) {
+            if (_lead_track_isDebug()) {
+
+              watchdog('Lead Track - Tracking Visit', t('SUCCESS Tracking Visit (hook_page_alter(&$page)) for the url @url with user @uid.', array('@url' => $tmp_line->url, '@uid' => $tmp_line->uid)), array(), WATCHDOG_DEBUG);
+            }
+          }
+          else {
+
+            watchdog('Lead Track - Tracking Visit', t('FAILED Tracking Visit (hook_page_alter(&$page)) for the url @url with user @uid.', array('@url' => $tmp_line->url, '@uid' => $tmp_line->uid)), array(), WATCHDOG_ALERT);
+          }
+        }
+      }
+      else {
+        //IS a short URL we track it for events OR/AND conversions
+        $trackIt = TRUE;
+      }
+    }
+    //VISIT TRACKING PART - END
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //EVENT TRACKING PART - START
+    //IF the Lead Track Event Tracking is ENABLE
+    if (arg(0) != 'admin' && variable_get(LEAD_TRACK_V_EVENT_ENABLE, LEAD_TRACK_D_EVENT_ENABLE)) {
+
+      $eventUrls = variable_get(LEAD_TRACK_V_EVENT_URLS_WITH_PATH, LEAD_TRACK_D_EVENT_URLS_WITH_PATH);
+
+      //Check if it's an event
+      $is_event = FALSE;
+      if (count($eventUrls)) {
+        if (in_array($_GET['q'], $eventUrls)) {
+          $is_event = TRUE;
+        }
+        else {
+          $patterns = variable_get(LEAD_TRACK_V_EVENT_URLS_REGEX, LEAD_TRACK_D_EVENT_URLS_REGEX);
+
+          $drupal_path = drupal_lookup_path('alias', $_GET['q']);
+
+          foreach ($patterns as $key => $pattern) {
+            if (preg_match($pattern, $_GET['q'])) {
+              $is_event = TRUE;
+              continue;
+            }
+            else if ($drupal_path && preg_match($pattern, $drupal_path)) {
+              $is_event = TRUE;
+              continue;
+            }
+          }
+        }
+      }
+
+      if ($trackIt && $is_event) {
+        //IF TRUE, 
+        //grab cookie visitor id AND uid
+        $visitor_id = _lead_track_get_visitor_id_from_cookie();
+        if ($user_id == 0) {
+          //Try to retrieve the uid using the CONST_VISITOR_ID
+          $user_id = _lead_track_retrieve_uid($visitor_id);
+        }
+        //grab all tracking line from tracking_tmp table ordered by timestamp where visitor_id == cookie visitor id AND/OR table uid == uid
+        $data = _lead_track_get_all_tracking_tmp($visitor_id, $user_id);
+        $data = $data->fetchAll();
+
+        if (!empty($data)) {
+
+          //Create a json object of the data with key (entry, urls, event)
+          $line = new stdClass();
+
+          $tracking = new stdClass();
+
+          //ENTRY -- First one
+          $tracking->entry = new stdClass();
+          $tracking->entry->type = $data[0]->type;
+          $tracking->entry->url = $data[0]->url;
+          $tracking->entry->timestamp = $data[0]->timestamp;
+          //Should be 1
+          $tracking->entry->isEntry = $data[0]->is_entry;
+          unset($data[0]);
+
+          //EVENT -- Last one
+          $lastItem = count($data);
+          $tracking->event = new stdClass();
+          $tracking->event->type = $data[$lastItem]->type;
+          $tracking->event->url = $data[$lastItem]->url;
+          $tracking->event->timestamp = $data[$lastItem]->timestamp;
+          $tracking->event->isEntry = $data[$lastItem]->is_entry;
+          unset($data[$lastItem]);
+
+          //Get last 5 urls
+          $data = array_reverse($data);
+
+          //URLS
+          $tracking->urls = array();
+          $countOfUrls = variable_get(LEAD_TRACK_V_EVENT_COUNT_URL, LEAD_TRACK_D_EVENT_COUNT_URL);
+          for ($i = 0; $i < $countOfUrls; $i++) {
+
+            if (isset($data[$i])) {
+              $value = $data[$i];
+              $obj = new stdClass();
+              $obj->type = $value->type;
+              $obj->url = $value->url;
+              $obj->timestamp = $value->timestamp;
+              $obj->isEntry = $value->is_entry;
+
+              $tracking->urls[] = $obj;
+            }
+            else {
+              break;
+            }
+          }
+
+          //Other data
+          $line->uid = ($user_id != NULL) ? $user_id : 'NULL';
+          $line->visitor_id = $visitor_id;
+          $line->slug = $tracking->entry->url;
+          $line->timestamp = time();
+          $line->tracking = json_encode($tracking);
+
+          //Create a line in Event table
+          if (_lead_track_create_event($line)) {
+            if (_lead_track_isDebug()) {
+              watchdog('Lead Track - Internal Event Tracking', t('SUCCESS Creating an Event for @url.', array('@url' => $_GET['q'])), array(), WATCHDOG_DEBUG);
+            }
+          }
+          else {
+            watchdog('Lead Track - Internal Event Tracking', t('FAILED Creating an Event for @url.', array('@url' => $_GET['q'])), array(), WATCHDOG_ALERT);
+          }
+        }
+      }
+    }
+    //EVENT TRACKING PART - END
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //CONVERSION TRACKING PART - START
+    if (arg(0) != 'admin' && variable_get(LEAD_TRACK_V_CONVERSION_ENABLE, LEAD_TRACK_D_CONVERSION_ENABLE)) {
+
+      $conversionUrls = variable_get(LEAD_TRACK_V_CONVERSION_URLS_WITH_PATH, LEAD_TRACK_D_CONVERSION_URLS_WITH_PATH);
+
+      //Check if it's an event
+      $is_conversion = FALSE;
+      if (count($eventUrls)) {
+        if (in_array($_GET['q'], $conversionUrls)) {
+          $is_conversion = TRUE;
+        }
+        else {
+          $patterns = variable_get(LEAD_TRACK_V_CONVERSION_URLS_REGEX, LEAD_TRACK_D_CONVERSION_URLS_REGEX);
+
+          $drupal_path = drupal_lookup_path('alias', $_GET['q']);
+
+          foreach ($patterns as $key => $pattern) {
+            if (preg_match($pattern, $_GET['q'])) {
+              $is_conversion = TRUE;
+              continue;
+            }
+            else if ($drupal_path && preg_match($pattern, $drupal_path)) {
+              $is_conversion = TRUE;
+              continue;
+            }
+          }
+        }
+      }
+
+      if ($trackIt && $is_conversion) {
+        //IF TRUE, 
+        //grab cookie visitor id AND uid
+        $visitor_id = _lead_track_get_visitor_id_from_cookie();
+        if ($user_id == 0) {
+          //Try to retrieve the uid using the CONST_VISITOR_ID_LENGTH
+          $user_id = _lead_track_retrieve_uid($visitor_id);
+        }
+        //grab all tracking line from tracking_tmp table ordered by timestamp where visitor_id == cookie visitor id AND/OR table uid == uid
+        $data = _lead_track_get_all_tracking_tmp($visitor_id, $user_id);
+        $data = $data->fetchAll();
+
+        if (!empty($data)) {
+
+          //Create a json object of the data with key (entry, urls, conversion)
+          $line = new stdClass();
+
+          $tracking = new stdClass();
+
+          //ENTRY -- First one
+          $tracking->entry = new stdClass();
+          $tracking->entry->type = $data[0]->type;
+          $tracking->entry->url = $data[0]->url;
+          $tracking->entry->timestamp = $data[0]->timestamp;
+          //Should be 1
+          $tracking->entry->isEntry = $data[0]->is_entry;
+          unset($data[0]);
+
+          //EVENT -- Last one
+          $lastItem = count($data);
+          $tracking->conversion = new stdClass();
+          $tracking->conversion->type = $data[$lastItem]->type;
+          $tracking->conversion->url = $data[$lastItem]->url;
+          $tracking->conversion->timestamp = $data[$lastItem]->timestamp;
+          $tracking->conversion->isEntry = $data[$lastItem]->is_entry;
+          unset($data[$lastItem]);
+
+          //Get last 5 urls
+          $data = array_reverse($data);
+
+          //URLS
+          $tracking->urls = array();
+          $countOfUrls = variable_get(LEAD_TRACK_V_CONVERSION_COUNT_URL, LEAD_TRACK_D_CONVERSION_COUNT_URL);
+          for ($i = 0; $i < $countOfUrls; $i++) {
+
+            if (isset($data[$i])) {
+              $value = $data[$i];
+              $obj = new stdClass();
+              $obj->type = $value->type;
+              $obj->url = $value->url;
+              $obj->timestamp = $value->timestamp;
+              $obj->isEntry = $value->is_entry;
+
+              $tracking->urls[] = $obj;
+            }
+            else {
+              break;
+            }
+          }
+
+          //Other data
+          $line->uid = ($user_id != NULL) ? $user_id : 'NULL';
+          $line->visitor_id = $visitor_id;
+          $line->slug = $tracking->entry->url;
+          $line->timestamp = time();
+          $line->tracking = json_encode($tracking);
+
+          //Create a line in Conversion table
+          //TODO : create functions _lead_track_create_conversion($data)
+          if (_lead_track_create_conversion($line)) {
+            if (_lead_track_isDebug()) {
+              watchdog('Lead Track - Internal Conversion Tracking', t('SUCCESS Creating a Conversion for @url.', array('@url' => $_GET['q'])), array(), WATCHDOG_DEBUG);
+            }
+          }
+          else {
+            watchdog('Lead Track - Internal Conversion Tracking', t('FAILED Creating a Conversion for @url.', array('@url' => $_GET['q'])), array(), WATCHDOG_ALERT);
+          }
+
+          //Delete all data from tracking_tmp table where visitor_id == cookie visitor id AND/OR table uid == uid
+          _lead_track_delete_all_tracking_tmp($visitor_id, $user_id);
+        }
+
+        //Clean Cookie || start new tracking?
+        _lead_track_set_cookie_status(CONST_TRACKING_COOKIE_STATUS_UNACTIVE_VALUE);
+      }
+      //CONVERSION TRACKING PART - END
+      //////////////////////////////////////////////////////////
+    }
+  }
+  catch (Exception $e) {
+    watchdog('Lead Track - Error', $e->getMessage(), array(), WATCHDOG_ALERT);
+  }
+}
+
+/**
+ * The front landing page, use as a bounce to the final redirection.
+ *
+ * @param $string $slug
+ * 	Use to retrieve the final redirection an increase the visit count of the page
+ *
+ * @return mixed
+ * 	If $slug IS found in the database - 301 Redirection
+ * 	If $slug IS NOT found in the database - 404 not found error
+ *
+ * @see slug_load($slug)
+ */
+function lead_track_landing_page($url_array) {
+
+  //check if short url exists
+  if ($url_array == NULL) {
+    //Display error 404
+    drupal_not_found();
+  }
+  else {
+
+    $res = _lead_track_campaign_by_id($url_array['cid']);
+    $campaign = $res->fetchAssoc();
+    $url_array['campaign_name'] = $campaign['name'];
+
+    //build url_redirection
+    $url_array['url_redirection'] = _lead_track_generate_url_redirection($url_array, TRUE);
+
+    $skip_tracking = FALSE;
+
+    global $user;
+
+    //Check if some roles are excluded from tracking
+    $excluded_roles = variable_get(LEAD_TRACK_V_GLOBAL_EXCLUDED_ROLES, LEAD_TRACK_D_GLOBAL_EXCLUDED_ROLES);
+    //Check if user is logged in and if their roles are trackable by Lead Track
+    if ($user->uid > 0 && $excluded_roles != LEAD_TRACK_D_GLOBAL_EXCLUDED_ROLES) {
+      foreach ($user->roles as $role_id => $role_name) {
+        if (in_array($role_id, $excluded_roles)) {
+          $skip_tracking = TRUE;
+          break;
+        }
+      }
+    }
+
+    if (!$skip_tracking) {
+
+      $user_id = $user->uid;
+
+      //IF the Lead Track Event OR Conversion Tracking is ENABLE
+      if (variable_get(LEAD_TRACK_V_EVENT_ENABLE, LEAD_TRACK_D_EVENT_ENABLE) || variable_get(LEAD_TRACK_V_CONVERSION_ENABLE, LEAD_TRACK_D_CONVERSION_ENABLE)) {
+
+        //////////////////////////////////////////////////////////
+        //VISIT TRACKING PART - START
+
+        $trackIt = FALSE;
+        $startTracking = FALSE;
+        $restartTracking = FALSE;
+        $visitor_id = NULL;
+
+
+        if (isset($_COOKIE['Drupal_visitor_' . LEAD_TRACK_COOKIE_KEY_TRACKING]) && $_COOKIE['Drupal_visitor_' . LEAD_TRACK_COOKIE_KEY_TRACKING] != 'null') {
+          //COOKIE EXISTS
+
+          $cookieData = json_decode($_COOKIE['Drupal_visitor_' . LEAD_TRACK_COOKIE_KEY_TRACKING]);
+
+          if (isset($cookieData->{CONST_TRACKING_COOKIE_STATUS_KEY}) && $cookieData->{CONST_TRACKING_COOKIE_STATUS_KEY} == CONST_TRACKING_COOKIE_STATUS_UNACTIVE_VALUE) {
+            //Restart Tracking the visitor
+            $restartTracking = TRUE;
+          }
+          else if (isset($cookieData->{CONST_TRACKING_COOKIE_STATUS_KEY}) && $cookieData->{CONST_TRACKING_COOKIE_STATUS_KEY} == CONST_TRACKING_COOKIE_STATUS_ACTIVE_VALUE) {
+            //Keep Tracking the visitor
+            $trackIt = TRUE;
+          }
+
+          $visitor_id = _lead_track_get_visitor_id_from_cookie();
+
+          if ($user_id == 0) {
+
+            //Try to retrieve the uid using the CONST_VISITOR_ID
+            $user_id = _lead_track_retrieve_uid($visitor_id);
+            //$user = ($user_id != NULL)? user_load($user_id) : $user;
+          }
+        }
+        else if ($user_id > 0) {
+          //User is logged in				
+          //Check if already have a visitorID for the user		
+          $vid = _lead_track_retrieve_visitor_id($user_id);
+
+          if ($vid != NULL && _lead_track_isTracked($user_id) != FALSE) {
+            //If TRUE keep tracking it
+            $trackIt = TRUE;
+
+            //Update Cookie
+            _lead_track_update_cookie($vid, CONST_TRACKING_COOKIE_STATUS_ACTIVE_VALUE);
+          }
+          else if ($vid != NULL) {
+            //We have the user's visitorID but the user is not tracked yet
+            $visitor_id = $vid;
+            $restartTracking = TRUE;
+          }
+          else {
+            //The user reaches a short url for the first time
+            $startTracking = TRUE;
+          }
+        }
+        else {
+          //Is Anonymous
+          //The anonymous user reaches a short url for the first time
+          $startTracking = TRUE;
+        }
+
+        if ($trackIt) {
+
+          $user_type = ($user_id > 0) ? $user_id : 'NULL';
+
+          $tmp_line = new stdClass();
+
+          //Generate unique visitor ID
+          $tmp_line->visitor_id = _lead_track_get_visitor_id_from_cookie();
+          //IMPORTANT
+          $tmp_line->isEntry = 1;
+          $tmp_line->timestamp = time();
+          $tmp_line->uid = $user_type;
+          $tmp_line->url = $url_array['slug'];
+          $tmp_line->type = CONST_TRACKING_TYPE_SHORT_URL;
+
+          $user_type = ($user_id > 0) ? $user_id : 'Anonymous';
+
+          //Add line in tmp table
+          if (_lead_track_create_tracking_tmp($tmp_line)) {
+            if (_lead_track_isDebug()) {
+
+              watchdog('Lead Track - Tracking Visit', t('SUCCESS Tracking Visit (hook_page_alter(&$page)) for the url @url with user @uid.', array('@url' => $tmp_line->url, '@uid' => $tmp_line->uid)), array(), WATCHDOG_DEBUG);
+            }
+          }
+          else {
+
+            watchdog('Lead Track - Tracking Visit', t('FAILED Tracking Visit (hook_page_alter(&$page)) for the url @url with user @uid.', array('@url' => $tmp_line->url, '@uid' => $tmp_line->uid)), array(), WATCHDOG_ALERT);
+          }
+        }
+        else if ($startTracking) {
+
+          $visitor_id = _lead_track_start_tracking_visitor($user_id, $url_array['slug']);
+        }
+        else if ($restartTracking) {
+
+          _lead_track_restart_tracking_visitor($visitor_id, $user_id, $url_array['slug']);
+        }
+
+        //VISIT TRACKING PART - END
+        //////////////////////////////////////////////////////////
+      }
+
+      //////////////////////////////////////////////////////////
+      //ANALYTICS PART - START
+      //EVENTS
+      if (variable_get(LEAD_TRACK_V_GA_EVENT_ENABLE, LEAD_TRACK_D_GA_EVENT_ENABLE)) {
+
+        if (!$campaign['ga_event_disable']) {
+
+          $clientID = variable_get(LEAD_TRACK_V_GA_CLIENT_ID, LEAD_TRACK_D_GA_CLIENT_ID);
+          if (isset($_COOKIE["_ga"])) {
+            $clientID = getCid();
+          }
+
+          //Send data to analytics
+          $ch = curl_init(CONST_ANALYTICS_COLLECT_URL);
+
+          $encoded = '';
+
+          $event_value = ($campaign['ga_event_value'] == null) ? variable_get(LEAD_TRACK_V_GA_EVENT_VALUE, LEAD_TRACK_D_GA_EVENT_VALUE) : $campaign['ga_event_value'];
+
+          $dataToSend = array(
+            // Version.
+            'v' => CONST_ANALYTICS_COLLECT_VERSION,
+            // Tracking ID / Web property / Property ID.
+            'tid' => variable_get(LEAD_TRACK_V_GA_TRACKING_ID, LEAD_TRACK_D_GA_TRACKING_ID),
+            // Anonymous Client ID.
+            'cid' => $clientID,
+            // Event hit type.
+            't' => 'event',
+            // Event Category. Required.
+            'ec' => variable_get(LEAD_TRACK_V_GA_EVENT_CATEGORY, LEAD_TRACK_D_GA_EVENT_CATEGORY),
+            // Event Action. Required.
+            'ea' => variable_get(LEAD_TRACK_V_GA_EVENT_ACTION, LEAD_TRACK_D_GA_EVENT_ACTION),
+            // Event label.
+            'el' => $campaign['name'] . ' - ' . $url_array['analytics_content'],
+            // Event value.
+            'ev' => $event_value
+          );
+
+          $encoded = '';
+          foreach ($dataToSend as $name => $value) {
+            $encoded .= urlencode($name) . '=' . urlencode($value) . '&';
+          }
+          // chop off last ampersand
+          $encoded = substr($encoded, 0, strlen($encoded) - 1);
+          curl_setopt($ch, CURLOPT_POSTFIELDS, $encoded);
+          curl_setopt($ch, CURLOPT_HEADER, 0);
+          curl_setopt($ch, CURLOPT_POST, 1);
+          $curl_success = curl_exec($ch);
+          curl_close($ch);
+
+          if ($curl_success) {
+            if (_lead_track_isDebug()) {
+              watchdog('Lead Track - CURL to Analytics - Event', 'SUCCESS : ' . $encoded, array(), WATCHDOG_DEBUG);
+            }
+          }
+          else {
+            watchdog('Lead Track - CURL to Analytics - Event', 'FAILED : ' . $encoded, array(), WATCHDOG_ALERT);
+          }
+        }
+      }
+      //EVENT - END
+      //PAGEVIEW
+      if (variable_get(LEAD_TRACK_V_GA_PAGEVIEW_ENABLE, LEAD_TRACK_D_GA_PAGEVIEW_ENABLE)) {
+
+        if (!$campaign['ga_pageview_disable']) {
+
+          $clientID = variable_get(LEAD_TRACK_V_GA_CLIENT_ID, LEAD_TRACK_D_GA_CLIENT_ID);
+          if (isset($_COOKIE["_ga"])) {
+            $clientID = getCid();
+          }
+
+          //Send data to analytics
+          $ch = curl_init(CONST_ANALYTICS_COLLECT_URL);
+
+          $encoded = '';
+          global $base_root;
+
+          $dataToSend = array(
+            // Version.
+            'v' => CONST_ANALYTICS_COLLECT_VERSION,
+            // Tracking ID / Web property / Property ID.
+            'tid' => variable_get(LEAD_TRACK_V_GA_TRACKING_ID, LEAD_TRACK_D_GA_TRACKING_ID),
+            // Anonymous Client ID.
+            'cid' => $clientID,
+            // Pageview hit type.
+            't' => 'pageview',
+            // Document hostname.
+            'dh' => $base_root,
+            // Page.
+            'dp' => $url_array['slug'],
+            // Title.
+            'dt' => $campaign['name'] . ' - ' . $url_array['analytics_content'],
+          );
+
+          $encoded = '';
+          foreach ($dataToSend as $name => $value) {
+            $encoded .= urlencode($name) . '=' . urlencode($value) . '&';
+          }
+          // chop off last ampersand
+          $encoded = substr($encoded, 0, strlen($encoded) - 1);
+          curl_setopt($ch, CURLOPT_POSTFIELDS, $encoded);
+          curl_setopt($ch, CURLOPT_HEADER, 0);
+          curl_setopt($ch, CURLOPT_POST, 1);
+          $curl_success = curl_exec($ch);
+          curl_close($ch);
+
+          if ($curl_success) {
+            if (_lead_track_isDebug()) {
+              watchdog('Lead Track - CURL to Analytics - PageView', 'SUCCESS : ' . $encoded, array(), WATCHDOG_DEBUG);
+            }
+          }
+          else {
+            watchdog('Lead Track - CURL to Analytics - PageView', 'FAILED : ' . $encoded, array(), WATCHDOG_ALERT);
+          }
+        }
+      }
+      //PAGEVIEW - END
+      //ANALYTICS PART - END
+      //////////////////////////////////////////////////////////		
+      //////////////////////////////////////////////////////////
+      //SALESFORCE PART - START
+      if (variable_get(LEAD_TRACK_V_SF_ENABLE, LEAD_TRACK_D_SF_ENABLE) && $user_id > 0) {
+
+        if ($campaign['sf_enable']) {
+
+          $ch = curl_init(variable_get(LEAD_TRACK_V_SF_URL, LEAD_TRACK_D_SF_URL));
+
+          $account = user_load($user_id);
+
+          // Assign salesforce oid to data array.
+          $sf_data = array(
+            'oid' => variable_get(LEAD_TRACK_V_SF_OID),
+          );
+
+          // Loop thru salesforce map, assign user data to array.
+
+          $mapping_json = variable_get(LEAD_TRACK_V_SF_MAPPING, LEAD_TRACK_D_SF_MAPPING);
+          $mapping = ($mapping_json == LEAD_TRACK_D_SF_MAPPING) ? array() : json_decode($mapping_json);
+
+          if (!empty($mapping)) {
+
+            print_r($mapping);
+
+            $sf_data = array();
+
+            foreach ($mapping as $key => $attrs) {
+
+              if (!empty($account->{$attrs->drupal})) {
+
+                if (is_array($account->{$attrs->drupal})) {
+                  $sf_data[$attrs->salesforce] = stripslashes($account->{$attrs->drupal}['und'][0]['value']);
+                }
+                else {
+                  $sf_data[$attrs->salesforce] = stripslashes($account->{$attrs->drupal});
+                }
+              }
+            }
+
+            $sf_data['lead_source'] = ($campaign['sf_lead_source'] == null) ? variable_get(LEAD_TRACK_V_SF_LEAD_SOURCE, LEAD_TRACK_D_SF_LEAD_SOURCE) : $campaign['sf_lead_source'];
+
+            $encoded = '';
+            foreach ($sf_data as $name => $value) {
+              $encoded .= urlencode($name) . '=' . urlencode($value) . '&';
+            }
+
+            // chop off last ampersand
+            if (strlen($encoded) > 0) {
+              $encoded = substr($encoded, 0, strlen($encoded) - 1);
+            }
+
+            // chop off last ampersand
+            $encoded = substr($encoded, 0, strlen($encoded) - 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $encoded);
+            curl_setopt($ch, CURLOPT_HEADER, 0);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            $curl_success = curl_exec($ch);
+            curl_close($ch);
+
+            if ($curl_success) {
+              if (_lead_track_isDebug()) {
+                watchdog('Lead Track - CURL to SalesForce', 'SUCCESS : ' . $encoded, array(), WATCHDOG_DEBUG);
+              }
+            }
+            else {
+              watchdog('Lead Track - CURL to SalesForce', 'FAILED : ' . $encoded, array(), WATCHDOG_ALERT);
+            }
+          }
+          else {
+            watchdog('Lead Track - CURL to SalesForce', 'STOPPED : Mapping is empty.', array(), WATCHDOG_DEBUG);
+          }
+        }
+      }
+      //SALESFORCE PART - END
+      //////////////////////////////////////////////////////////			
+      //implement the count of visit for the short url
+      if (_lead_track_implement_visit($url_array)) {
+
+        if (_lead_track_isDebug()) {
+          watchdog('Lead Track - Internal', t('SUCCESS Implementing visit for short url @slug.', array('slug' => $url_array['slug'])), array(), WATCHDOG_DEBUG);
+        }
+
+        $uid = ($user_id > 0) ? $user_id : NULL;
+
+        //Check if we already have the visitor_id
+        if (!isset($visitor_id) || $visitor_id == NULL) {
+
+          if ($user_id > 0) {
+            //Any logged in user receive a visitor_id and it's saved in the Relation table
+            $visitor_id = _lead_track_retrieve_visitor_id($user_id);
+          }
+          else {
+
+            $visitor_id = _lead_track_get_visitor_id_from_cookie();
+          }
+        }
+
+        $visitor_id = ($visitor_id != NULL) ? $visitor_id : NULL;
+
+
+        //create a visit in the table lead_track_visit for the tracking
+        if (!_lead_track_create_visit($uid, $visitor_id, $url_array['uid'])) {
+          watchdog('Lead Track - Visit Tracking', t('FAILED Creating visit for short url @slug with user uid = @uid and visitor_id = @visitor_id.', array('@slug' => $url_array['slug'], '@uid' => $user_id, '@visitor_id' => $visitor_id)), array(), WATCHDOG_ALERT);
+        }
+        elseif (_lead_track_isDebug()) {
+          watchdog('Lead Track - Visit Tracking', t('SUCCESS Creating visit for short url @slug with user uid = @uid and visitor_id = @visitor_id.', array('@slug' => $url_array['slug'], '@uid' => $user_id, '@visitor_id' => $visitor_id)), array(), WATCHDOG_DEBUG);
+        }
+      }
+      else {
+
+        watchdog('Lead Track - Internal', t('FAILED Implementing visit for short url @slug.', array('@slug' => $url_array['slug'])), array(), WATCHDOG_ALERT);
+      }
+    }
+
+    //redirect to the final url using a 301 Redirection
+    drupal_goto($url_array['url_redirection'], array('external' => TRUE), $http_response_code = 301);
+  }
+}
+
+/**
+ * Return the form to create a new short url.
+ *
+ * The form is composed of the landing url, a campaign and the Google Analytics url params.
+ * All the elements are mandatory
+ *
+ * @param array $form
+ * 	The form which will be returned by the function
+ *
+ * @param array $form_state
+ *
+ * @return array
+ * 	The form implemented with the new elements
+ *
+ * @see lead_track_menu()
+ * @link https://api.drupal.org/api/drupal/developer!topics!forms_api_reference.html/7#elements
+ */
+function lead_track_form_create_url($form, &$form_state) {
+
+
+  $id_campaign = NULL;
+  //Check if campaign id in url - if Edit mode
+  if (arg(3) != NULL) {
+    $id_campaign = arg(3);
+  }
+  else if (isset($_GET['id_campaign'])) {
+    $id_campaign = $_GET['id_campaign'];
+  }
+
+  drupal_set_title(t('Create a short Url'));
+
+  global $base_url;
+
+  //Landing Url (Mandatory)
+  $form['lead_track_url'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Landing Url'),
+    '#default_value' => $base_url,
+    '#size' => 50,
+    '#maxlength' => 255,
+    '#description' => t('The landing url'),
+    '#required' => TRUE,
+  );
+
+  //Retrieve all the campaigns to provide a select input
+  $res = _lead_track_campaigns();
+
+  $result = $res->fetchAll();
+  $campaigns = array();
+  foreach ($result as $campaign) {
+    $campaigns[$campaign->cid] = $campaign->name;
+  }
+
+  //Campaign (Mandatory)
+  $form['lead_track_campaign'] = array(
+    '#type' => 'select',
+    '#title' => t('Campaign'),
+    '#required' => TRUE,
+    '#options' => $campaigns,
+    '#default_value' => ($id_campaign != NULL) ? $id_campaign : '',
+    '#description' => t('Select the campaign for your new short url'),
+  );
+
+  //Google Analytics params
+  //Campaign (above)
+  //Medium (Mandatory)
+  $form['lead_track_analytics_medium'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Campaign Medium'),
+    '#default_value' => t('Email'),
+    '#size' => 50,
+    '#maxlength' => 255,
+    '#description' => t('The medium of your campaign - Enter . to list all previous entries'),
+    '#required' => TRUE,
+    '#autocomplete_path' => 'admin/lead_track/autocomplete/' . CONST_SQL_TABLE_URL . '/' . CONST_SQL_COLUMN_URL_MEDIUM,
+  );
+
+  //Source (Mandatory)
+  $form['lead_track_analytics_source'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Campaign Source'),
+    '#default_value' => t('loopfuse'),
+    '#size' => 50,
+    '#maxlength' => 255,
+    '#description' => t('The source of your campaign (loopfuse, ics.com/newsletters) - Enter . to list all previous entries'),
+    '#required' => TRUE,
+    '#autocomplete_path' => 'admin/lead_track/autocomplete/' . CONST_SQL_TABLE_URL . '/' . CONST_SQL_COLUMN_URL_SOURCE,
+  );
+
+  //Content (Mandatory)
+  $form['lead_track_analytics_content'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Link name'),
+    '#default_value' => t('Logo ICS'),
+    '#size' => 50,
+    '#maxlength' => 255,
+    '#description' => t('The name or content of the link - Enter . to list all previous entries'),
+    '#required' => TRUE,
+    '#autocomplete_path' => 'admin/lead_track/autocomplete/' . CONST_SQL_TABLE_URL . '/' . CONST_SQL_COLUMN_URL_CONTENT,
+  );
+
+  //Submit button
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Create short url'),
+  );
+
+  return $form;
+}
+
+/**
+ * Return the form to create a new campaign.
+ *
+ * The campaign requires a mandatory name and an optional size.
+ *
+ * @param array $form
+ * 	The form which will be returned by the function
+ *
+ * @param array $form_state
+ *
+ * @return array
+ * 	The form implemented with the new elements
+ *
+ * @see lead_track_menu()
+ * @link https://api.drupal.org/api/drupal/developer!topics!forms_api_reference.html/7#elements
+ */
+function lead_track_form_create_campaign($form, &$form_state) {
+
+  $campaign = FALSE;
+
+  $id_campaign = arg(3);
+
+  //Check if campaign id in url - if Edit mode
+  if ($id_campaign != NULL) {
+    $res = _lead_track_campaign_by_id($id_campaign);
+    $campaign = $res->fetchAssoc();
+  }
+
+  //If we are editing a campaign
+  if ($campaign) {
+    drupal_set_title(t('Edit campaign - ' . $campaign['name']));
+
+    $form['lead_track_campaign_id'] = array(
+      '#type' => 'hidden',
+      '#value' => $campaign['cid'],
+    );
+  }
+  else {
+    drupal_set_title(t('Create a campaign'));
+  }
+
+  global $base_url;
+
+  //Name of the campaign (Mandatory)
+  $form['lead_track_campaign_name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Campaign name'),
+    '#default_value' => ($campaign) ? $campaign['name'] : t('Newsletter'),
+    '#size' => 50,
+    '#maxlength' => 50,
+    '#description' => t('The name of the campaign'),
+    '#required' => TRUE,
+  );
+
+  //The size of the campaign (Optional)
+  $form['lead_track_campaign_size'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Campaign list size'),
+    '#default_value' => ($campaign) ? $campaign['size'] : 0,
+    '#size' => 50,
+    '#maxlength' => 50,
+    '#description' => t('The size of the campaign\'s list'),
+    '#required' => FALSE,
+  );
+
+  //Google Analytics
+  $form['lead_track_ga_fieldset'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Google Analytics Params'),
+    '#collapsible' => FALSE,
+    '#collapsed' => FALSE,
+  );
+
+  $form['lead_track_ga_fieldset']['delimiter_events'] = array(
+    '#markup' => '<hr/>',
+  );
+
+  $form['lead_track_ga_fieldset']['subtitle_events'] = array(
+    '#markup' => '<h3>Events</h3>',
+  );
+
+  if (variable_get(LEAD_TRACK_V_GA_EVENT_ENABLE, LEAD_TRACK_D_GA_EVENT_ENABLE)) {
+
+    $form['lead_track_ga_fieldset']['lead_track_campaign_ga_event_disable'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Disable Google Analytics Event Tracking for this campaign'),
+      '#default_value' => ($campaign) ? $campaign['ga_event_disable'] : FALSE,
+      '#size' => 100,
+      '#description' => t("Disallow Google Analytics to track this campaign's short urls as an Event."),
+      '#required' => FALSE,
+    );
+
+    $form['lead_track_ga_fieldset']['lead_track_campaign_ga_event_value'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Event value'),
+      '#default_value' => ($campaign && $campaign['ga_event_value'] != NULL) ? $campaign['ga_event_value'] : variable_get(LEAD_TRACK_V_GA_EVENT_VALUE, LEAD_TRACK_D_GA_EVENT_VALUE),
+      '#size' => 2,
+      '#maxlength' => 8,
+      '#description' => t('The value of the Google Analytics Event'),
+      '#required' => FALSE,
+    );
+  }
+  else {
+    $form['lead_track_ga_fieldset']['msg'] = array(
+      '#markup' => t('Google Analytics Event option is not set up in Lead Track yet. ') . l('Go to Lead Track configuration to change it...', 'admin/config/lead_track'),
+      '#weight' => 1,
+    );
+  }
+
+  $form['lead_track_ga_fieldset']['delimiter_pageviews'] = array(
+    '#markup' => '<hr/>',
+  );
+
+  $form['lead_track_ga_fieldset']['subtitle_pageviews'] = array(
+    '#markup' => '<h3>PageView</h3>',
+  );
+
+  if (variable_get(LEAD_TRACK_V_GA_PAGEVIEW_ENABLE, LEAD_TRACK_D_GA_PAGEVIEW_ENABLE)) {
+
+    $form['lead_track_ga_fieldset']['lead_track_campaign_ga_pageview_disable'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Disable Google Analytics PageView Tracking for this campaign'),
+      '#default_value' => ($campaign) ? $campaign['ga_pageview_disable'] : FALSE,
+      '#size' => 100,
+      '#description' => t("Disallow Google Analytics to track this campaign's short urls as a PageView."),
+      '#required' => FALSE,
+    );
+  }
+  else {
+    $form['lead_track_ga_fieldset']['msg'] = array(
+      '#markup' => t('Google Analytics PageView option is not set up in Lead Track yet. ') . l('Go to Lead Track configuration to change it...', 'admin/config/lead_track'),
+      '#weight' => 1,
+    );
+  }
+
+  //SalesForce
+  $form['lead_track_sf_fieldset'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('SalesForce Web-To-Lead Params'),
+    '#collapsible' => FALSE,
+    '#collapsed' => FALSE,
+  );
+
+  if (variable_get(LEAD_TRACK_V_SF_ENABLE, LEAD_TRACK_D_SF_ENABLE)) {
+
+    $form['lead_track_sf_fieldset']['lead_track_campaign_sf_enable'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Enable SalesForce Web-To-Lead for this campaign'),
+      '#default_value' => ($campaign) ? $campaign['sf_enable'] : LEAD_TRACK_D_SF_CAMPAIGN_ENABLE,
+      '#size' => 100,
+      '#description' => t("Allow Lead Track to send data to SalesForce for this campaign."),
+      '#required' => FALSE,
+    );
+
+    $form['lead_track_sf_fieldset']['lead_track_campaign_sf_lead_source'] = array(
+      '#type' => 'textfield',
+      '#title' => t('The SalesForce Lead Source for this campaign'),
+      '#default_value' => ($campaign) ? $campaign['sf_lead_source'] : variable_get(LEAD_TRACK_V_SF_LEAD_SOURCE, LEAD_TRACK_D_SF_LEAD_SOURCE),
+      '#size' => 20,
+      '#maxlength' => 50,
+      '#description' => t('The Lead Source to show in SalesForce for every Lead generated by this campaign.'),
+      '#required' => FALSE,
+    );
+  }
+  else {
+    $form['lead_track_sf_fieldset']['msg'] = array(
+      '#markup' => t('SalesForce Web-To-Lead option is not set up in Lead Track yet. ') . l('Go to Lead Track configuration to change it...', 'admin/config/lead_track'),
+      '#weight' => 1,
+    );
+  }
+
+  //Submit button
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => ($campaign) ? t('Update campaign') : t('Create campaign'),
+  );
+
+  return $form;
+}
+
+/**
+ * Check if the redirection (based on the form values) doesn't already exist in the database
+ *
+ * @param array $form
+ *
+ * @param array $form_state
+ * 	Where the values from the form are stored
+ *
+ * @return mixed
+ * 	If the redirection IS NOT in database => nothing - go to lead_track_form_create_url_submit(...)
+ * 	If the redirection IS in the database => error alert via Drupal Api
+ *
+ * @see lead_track_form_create_url()
+ */
+function lead_track_form_create_url_validate($form, &$form_state) {
+
+  //Get data from the form submission to generate the redirection url
+  $params['analytics_medium'] = $form_state["values"]["lead_track_analytics_medium"];
+  $params['analytics_source'] = $form_state["values"]["lead_track_analytics_source"];
+  $params['analytics_content'] = $form_state["values"]["lead_track_analytics_content"];
+  $params['url_base'] = $form_state["values"]["lead_track_url"];
+
+  //Get the campaign array from database using its id from the form select input
+  $res = _lead_track_campaign_by_id($form_state['values']['lead_track_campaign']);
+  $campaign = $res->fetchAssoc();
+  $params['campaign_name'] = $campaign['name'];
+
+  //Check if the url already exists
+  $result = _lead_track_url_exists($params);
+
+  if ($result) {
+    //Url exists so we display an error msg
+    form_set_error('', t('Short url with the same params already exists.'));
+  }
+  else {
+    //Url doesn't exist so I prepare the data for the _submit function
+    $form_state["values"]["lead_track_campaign"] = $campaign;
+  }
+}
+
+/**
+ * Add the new url and its params into the database
+ *
+ * @param array $node
+ *
+ * @param array $form_state
+ * 	Where the form values are stored
+ *
+ * @return message
+ * 	If the insert goes through => show confirmation message via Drupal Api
+ * 	If the insert DOESN'T go through => show error message via Drupal Api
+ *
+ * @see lead_track_form_create_url_validate()
+ */
+function lead_track_form_create_url_submit($node, &$form_state) {
+
+  //generate an unique slug
+  $slug = _lead_track_generate_slug();
+
+  //get timestamp for the `created` database field
+  $timestamp = time();
+
+  //Retrieve info entered by the user using the form
+  //but also the data implemented during the validation process of the values
+  //@see lead_track_form_create_url_validate()
+  $utm_medium = $form_state["values"]["lead_track_analytics_medium"];
+  $utm_source = $form_state["values"]["lead_track_analytics_source"];
+  $utm_content = $form_state["values"]["lead_track_analytics_content"];
+  $url_base = $form_state["values"]["lead_track_url"];
+
+  //Array with campaign data from the database
+  $utm_campaign = $form_state['values']['lead_track_campaign'];
+
+  //SQL Insert function
+  $sql = "insert into {" . CONST_SQL_TABLE_URL . "}
+	(slug, url_base, visits, created, analytics_medium, analytics_source, analytics_content, cid)
+	values ('$slug', '$url_base', '0', '$timestamp', '" . $utm_medium . "', '" . $utm_source . "', '" . $utm_content . "', '" . $utm_campaign['cid'] . "')";
+
+  //Execute SQL query
+  $db_result = db_query($sql);
+  if ($db_result) {
+    //The url HAS been created
+
+    global $base_url;
+
+    //format the short url using the slug and content from above
+    $url = _lead_track_format_url($slug, urlencode($utm_content));
+
+    //show a confirmation message via Drupal Api
+    drupal_set_message(
+        "Short Url
+			<a href='#' onclick=\"javascript:copyToClipboard('" . $url . "');\">" . $url . "</a>" .
+        " has been successfully added to the database"
+    );
+  }
+  else {
+    //the url HAS NOT been created
+    //show an error message via Drupal Api
+    form_set_error('', t('An unexpected error has occurred. The short url has not been created.'));
+  }
+}
+
+/**
+ * Check if the campaign name doesn't already exist in the database
+ *
+ * @param array $form
+ *
+ * @param array $form_state
+ * 	Where the values from the form are stored
+ *
+ * @return mixed
+ * 	If the campaign name IS NOT in database => nothing - go to lead_track_form_create_campaign_submit(...)
+ * 	If the campaign name IS in the database => error alert via Drupal Api
+ *
+ * @see lead_track_form_create_campaign()
+ */
+function lead_track_form_create_campaign_validate($form, &$form_state) {
+
+  //Check if the campaign name already exists in the database
+  $res = _lead_track_campaign($form_state["values"]["lead_track_campaign_name"]);
+  $result = $res->fetchAssoc();
+
+  if ($result > 0) {
+    //Campaign with same name exists
+
+    if (!isset($form_state["values"]["lead_track_campaign_id"]) || $result['cid'] != $form_state["values"]["lead_track_campaign_id"]) {
+      //The name IS IN the database AND
+      //We are not in Edit mode OR
+      //The id are differents
+      //so we display an error with a tips to the name field
+      form_set_error('lead_track_campaign_name', t('This campaign name is already taken.'));
+    }
+  }
+
+  //Check if size is an integer positif
+  $size = $form_state["values"]["lead_track_campaign_size"];
+  if (!is_numeric($size) || $size < 0) {
+    //no, we display an error msg using the Drupal API
+    form_set_error('lead_track_campaign_size', t('List size @size_value is not a positive number.', array('@size_value' => $form_state['values']['lead_track_campaign_size'])));
+  }
+}
+
+/**
+ * Add the campaign and its size into the database
+ *
+ * @param array $node
+ *
+ * @param array $form_state
+ * 	Where the form values are stored
+ *
+ * @return message
+ * 	If the insert goes through => show confirmation message via Drupal Api
+ * 	If the insert DOESN'T go through => show error message via Drupal Api
+ *
+ * @see lead_track_form_create_campaign_validate()
+ */
+function lead_track_form_create_campaign_submit($node, &$form_state) {
+
+  //get values from the form_state array
+  $name = $form_state["values"]["lead_track_campaign_name"];
+  $size = $form_state["values"]["lead_track_campaign_size"];
+
+  //If Analytics AND/OR SalesForce is not setup we provide default values. 
+  if (isset($form_state["values"]["lead_track_campaign_ga_event_value"])) {
+    $ga_event_value = $form_state["values"]["lead_track_campaign_ga_event_value"];
+    $ga_event_disable = $form_state["values"]["lead_track_campaign_ga_event_disable"];
+  }
+  else {
+    $ga_event_disable = 0;
+    $ga_event_value = NULL;
+  }
+
+  if (isset($form_state["values"]["lead_track_campaign_ga_pageview_disable"])) {
+    $ga_pageview_disable = $form_state["values"]["lead_track_campaign_ga_pageview_disable"];
+  }
+  else {
+    $ga_pageview_disable = 0;
+  }
+
+  if (isset($form_state["values"]["lead_track_campaign_sf_enable"])) {
+    $sf_enable = $form_state["values"]["lead_track_campaign_sf_enable"];
+    $sf_lead_source = "'" . $form_state["values"]["lead_track_campaign_sf_lead_source"] . "'";
+  }
+  else {
+    $sf_enable = 0;
+    $sf_lead_source = 'NULL';
+  }
+
+  $is_update = FALSE;
+
+  if (isset($form_state["values"]["lead_track_campaign_id"])) {
+
+    $is_update = TRUE;
+
+    $cid = $form_state["values"]["lead_track_campaign_id"];
+
+    // Table name no longer needs {}
+    $res = db_update(CONST_SQL_TABLE_CAMPAIGN)
+        ->fields(array(
+          'name' => $name,
+          'size' => $size,
+          'ga_event_disable' => $ga_event_disable,
+          'ga_event_value' => $ga_event_value,
+          'ga_pageview_disable' => $ga_pageview_disable,
+          'sf_enable' => $sf_enable,
+          'sf_lead_source' => $sf_lead_source,
+        ))
+        ->condition('cid', $cid, '=')
+        ->execute();
+
+    $db_result = $res;
+  }
+  else {
+
+    //get timestamp for the `created` database field
+    $timestamp = time();
+
+
+    $new_cid = db_insert(CONST_SQL_TABLE_CAMPAIGN)
+        ->fields(array(
+          'name' => $name,
+          'size' => $size,
+          'created' => time(),
+          'ga_event_disable' => $ga_event_disable,
+          'ga_event_value' => $ga_event_value,
+          'ga_pageview_disable' => $ga_pageview_disable,
+          'sf_enable' => $sf_enable,
+          'sf_lead_source' => $sf_lead_source,
+        ))
+        ->execute();
+
+    $cid = $new_cid;
+
+    //execute the query
+    //$db_result = db_query($sql, array(time()));		
+  }
+
+
+
+  $action = ($is_update) ? 'updated' : 'created';
+  //check result
+  if ((isset($db_result) && $db_result) || $new_cid) {
+
+    //Success	
+    drupal_set_message(
+        "Campaign " . l($form_state['values']['lead_track_campaign_name'], _lead_track_generate_url_admin(CONST_ADMIN_URL_CAMPAIGNS_CAMPAIGN, array('campaign_id' => $cid))) .
+        " has been successfully $action on the database"
+    );
+  }
+  else {
+    //Fail
+    //display an error msg using Drupal Api
+    form_set_error('', t('An unexpected error has occurred. Campaign @name has not been @action', array('@name' => $form_state['values']['lead_track_campaign_name'], '@action' => $action)));
+  }
+}
+
+function lead_track_campaigns_page() {
+
+  $field_score = 'Score';
+  $field_rank = 'Rank';
+  $orderByScore = false;
+  $orderByRank = false;
+  $sort = null;
+
+  //Handle Order by Score or Rank
+  if (isset($_GET['order']) && ($_GET['order'] == $field_score || $_GET['order'] == $field_rank)) {
+    //User wants to order by Score or Rank
+    if ($_GET['order'] == $field_score) {
+      $orderByScore = true;
+    }
+    else {
+      $orderByRank = true;
+    }
+    $sort = $_GET['sort'];
+
+    //We avoid the ordering in the sql query
+    unset($_GET['order']);
+  }
+
+  if ($orderByScore) {
+    $score_array = array('data' => 'Score');
+  }
+  else {
+    $score_array = array('data' => 'Score', 'field' => strtolower($field_score));
+  }
+
+  if ($orderByRank) {
+    $rank_array = array('data' => 'Rank');
+  }
+  else {
+    $rank_array = array('data' => 'Rank', 'field' => strtolower($field_rank));
+  }
+
+  $header = array(
+    array('data' => 'ID', 'field' => 'c.cid'),
+    array('data' => 'Name', 'field' => 'c.name'),
+    array('data' => 'Created', 'field' => 'c.created', 'sort' => 'desc'),
+    array('data' => 'Size', 'field' => 'c.size'),
+    array('data' => 'Urls', 'field' => 'urls'),
+    array('data' => 'Visits', 'field' => 'visits'),
+    array('data' => 'Events', 'field' => 'events'),
+    array('data' => 'Conversions', 'field' => 'conversions'),
+    $score_array,
+    $rank_array,
+  );
+
+  $query = db_select(CONST_SQL_TABLE_CAMPAIGN, 'c');
+  $query->innerJoin(CONST_SQL_TABLE_URL, 'u', 'c.cid = u.cid');
+  $query->fields('c', array('cid', 'name', 'created', 'size', 'ga_event_disable', 'ga_event_value', 'ga_pageview_disable', 'sf_enable', 'sf_lead_source'));
+  $query->addExpression('count(u.uid)', 'urls');
+
+  //Events count
+  $sub_query = '(select count(e.eid) from ' . CONST_SQL_TABLE_EVENT . ' e where e.slug IN (select slug from lead_track_url url where url.cid = u.cid))';
+  $query->addExpression($sub_query, 'events');
+
+  //Conversion count
+  $sub_query = '(select count(co.cid) from ' . CONST_SQL_TABLE_CONVERSION . ' co where co.slug IN (select slug from lead_track_url url where url.cid = u.cid))';
+  $query->addExpression($sub_query, 'conversions');
+
+  //Visit count
+  $sub_query = '(select count(v.url_id) from ' . CONST_SQL_TABLE_VISIT . ' v where v.url_id IN (select uid from	lead_track_url url where url.cid = c.cid))';
+  $query->addExpression($sub_query, 'visits');
+
+  $query->groupBy('c.cid');
+
+  if ($orderByScore || $orderByRank) {
+    $result_campaigns = $query->extend('PagerDefault')->limit(10)->execute();
+  }
+  else {
+    $result_campaigns = $query->extend('TableSort')->orderByHeader($header)->extend('PagerDefault')->limit(10)->execute();
+  }
+
+  $rows = array();
+
+  foreach ($result_campaigns as $campaign) {
+
+    $rankAndScore = _lead_track_calculate_rank_and_score(CONST_DATA_TYPE_CAMPAIGN, $campaign);
+
+    $rows[] = array(
+      'data' => array(
+        array('data' => $campaign->cid, 'style' => 'text-align:right;'),
+        array('data' => l($campaign->name, _lead_track_generate_url_admin(CONST_ADMIN_URL_CAMPAIGNS_CAMPAIGN, array('campaign_id' => $campaign->cid))), 'style' => ''),
+        array('data' => date('m/d/Y H:i:s', $campaign->created), 'style' => 'text-align:right;'),
+        array('data' => $campaign->size, 'style' => 'text-align:right;'),
+        array('data' => $campaign->urls, 'style' => 'text-align:right;'),
+        array('data' => $campaign->visits, 'style' => 'text-align:right;'),
+        array('data' => $campaign->events, 'style' => 'text-align:right;'),
+        array('data' => $campaign->conversions, 'style' => 'text-align:right;'),
+        array('data' => $rankAndScore['score'], 'style' => 'text-align:right;', 'class' => ($orderByScore) ? 'active' : ''),
+        array('data' => $rankAndScore['rank'], 'style' => 'text-align:right;', 'class' => ($orderByRank) ? 'active' : ''),
+      ),
+      'no_striping' => FALSE);
+  }
+
+  if ($orderByScore) {
+    //Order ASC
+    //Personal function to order campaigns by rank or score
+    usort($rows, "orderCampaignRowsByScore");
+  }
+
+  if ($orderByRank) {
+    //Order DESC
+    //Personal function to order campaigns by rank or score
+    usort($rows, "orderCampaignRowsByRank");
+  }
+
+  //Use the Drupal Api to render the form into our page
+  $form['table'] = array(
+    '#theme' => 'table',
+    '#header' => $header,
+    '#rows' => $rows,
+    '#empty' => 'No Campaign found',
+    '#sticky' => TRUE,
+    '#prefix' => '',
+    '#suffix' => '',
+  );
+  $form['pager'] = array(
+    '#markup' => theme('pager'),
+  );
+
+  return $form;
+}
+
+function lead_track_urls_page() {
+
+  $field_score = 'Score';
+  $field_rank = 'Rank';
+  $orderByScore = false;
+  $orderByRank = false;
+  $sort = null;
+
+  //Handle Order by Score or Rank
+  if (isset($_GET['order']) && ($_GET['order'] == $field_score || $_GET['order'] == $field_rank)) {
+    //User wants to order by Score or Rank
+    if ($_GET['order'] == $field_score) {
+      $orderByScore = true;
+    }
+    else {
+      $orderByRank = true;
+    }
+    $sort = $_GET['sort'];
+
+    //We avoid the ordering in the sql query
+    unset($_GET['order']);
+  }
+
+  if ($orderByScore) {
+    $score_array = array('data' => 'Score');
+  }
+  else {
+    $score_array = array('data' => 'Score', 'field' => strtolower($field_score));
+  }
+
+  if ($orderByRank) {
+    $rank_array = array('data' => 'Rank');
+  }
+  else {
+    $rank_array = array('data' => 'Rank', 'field' => strtolower($field_rank));
+  }
+
+  $header = array(
+    array('data' => 'ID', 'field' => 'u.uid'),
+    array('data' => 'Slug', 'field' => 'u.slug'),
+    array('data' => 'Url Base', 'field' => 'u.url_base'),
+    array('data' => 'Created', 'field' => 'u.created'),
+    array('data' => 'Medium', 'field' => 'u.analytics_medium'),
+    array('data' => 'Source', 'field' => 'c.analytics_source'),
+    array('data' => 'Content', 'field' => 'u.analytics_content'),
+    array('data' => 'Campaign', 'field' => 'c.name'),
+    array('data' => 'Visits', 'field' => 'u.visits'),
+    array('data' => 'Events', 'field' => 'events'),
+    array('data' => 'Conversions', 'field' => 'conversions'),
+    $score_array,
+    $rank_array,
+    array('data' => 'More'),
+  );
+
+  $query = db_select(CONST_SQL_TABLE_URL, 'u');
+  $query->leftJoin(CONST_SQL_TABLE_CAMPAIGN, 'c', 'u.cid = c.cid');
+  $query->fields('u', array('uid', 'slug', 'url_base', 'visits', 'created', 'analytics_medium', 'analytics_source', 'analytics_content', 'cid'));
+  $query->fields('c', array('cid'));
+  $query->addField('c', 'name', 'campaign_name');
+
+  //Events count
+  $sub_query = '(select count(eid) as count_events from ' . CONST_SQL_TABLE_EVENT . ' e where e.slug = u.slug)';
+  $query->addExpression($sub_query, 'events');
+
+  //Conversion count
+  $sub_query = '(select count(cid) as count_conversions from ' . CONST_SQL_TABLE_CONVERSION . ' co where co.slug = u.slug)';
+  $query->addExpression($sub_query, 'conversions');
+
+  if ($orderByScore || $orderByRank) {
+    $res_urls = $query->extend('PagerDefault')->limit(10)->execute();
+  }
+  else {
+    $res_urls = $query->extend('TableSort')->orderByHeader($header)->extend('PagerDefault')->limit(10)->execute();
+  }
+
+  $rows = array();
+
+  foreach ($res_urls as $url) {
+
+    $rankAndScore = _lead_track_calculate_rank_and_score(CONST_DATA_TYPE_URL, $url, TRUE);
+
+    $rows[] = array(
+      'data' => array(
+        array('data' => $url->uid, 'style' => ''),
+        array('data' => $url->slug . '<br/><a href="#" onclick="javascript:copyToClipboard(\'' . _lead_track_format_url($url->slug, urlencode($url->analytics_content)) . '\');">copy short link</a>'),
+        array('data' => $url->url_base, 'style' => 'word-break:break-all;'),
+        array('data' => date('m/d/Y H:i:s', $url->created), 'style' => 'word-break:break-all;'),
+        array('data' => $url->analytics_medium, 'style' => ''),
+        array('data' => $url->analytics_source, 'style' => ''),
+        array('data' => $url->analytics_content, 'style' => ''),
+        array('data' => l($url->campaign_name, _lead_track_generate_url_admin(CONST_ADMIN_URL_CAMPAIGNS_CAMPAIGN, array('campaign_id' => $url->cid))), 'style' => 'word-break:break-all;'),
+        array('data' => $url->visits, 'style' => ''),
+        array('data' => $url->events, 'style' => 'text-align:right;'),
+        array('data' => $url->conversions, 'style' => 'text-align:right;'),
+        array('data' => $rankAndScore['score'], 'style' => 'text-align:right;', 'class' => ($orderByScore) ? 'active' : ''),
+        array('data' => $rankAndScore['rank'], 'style' => 'text-align:right;', 'class' => ($orderByRank) ? 'active' : ''),
+        array('data' => l('More', _lead_track_generate_url_admin(CONST_ADMIN_URL_URLS_URL, array('url_id' => $url->uid))), 'style' => 'word-break:break-all;'),
+      ),
+      'no_striping' => FALSE, //
+    );
+    //
+  }//	
+
+  if ($orderByScore) {
+    //Order ASC
+    //Personal function to order urls by rank or score
+    usort($rows, "orderRowsByScore");
+  }
+
+  if ($orderByRank) {
+    //Order DESC
+    //Personal function to order urls by rank or score
+    usort($rows, "orderRowsByRank");
+  }
+
+  //Use the Drupal Api to render the form into our page
+
+  $form['table'] = array(
+    '#theme' => 'table',
+    '#header' => $header,
+    '#rows' => $rows,
+    '#empty' => 'No Url found',
+    '#sticky' => TRUE,
+    '#prefix' => '',
+    '#suffix' => '',
+  );
+  $form['pager'] = array(
+    '#markup' => theme('pager'),
+  );
+
+  return $form;
+}
+
+/**
+ * Return the admin home view containing a filter, a graphview and a list.
+ *
+ * @param array $form
+ * 	The form which will be returned by the function
+ *
+ * @param array $form_state
+ *
+ * @return array
+ * 	The form implemented with the new elements
+ *
+ * @see lead_track_menu()
+ * @link https://api.drupal.org/api/drupal/developer!topics!forms_api_reference.html/7#elements
+ */
+function lead_track_form_dashboard_page($form, &$form_state) {
+
+  global $base_url;
+
+  //Set the default selected campaign as the first returned from the database
+  $id_selected_campaign = 0;
+
+  if (!isset($_SESSION[LEAD_TRACK_SESSION_KEY_FILTER]) || empty($_SESSION[LEAD_TRACK_SESSION_KEY_FILTER])) {
+    $res_urls = _lead_track_urls();
+  }
+  else {
+    $form_state['filters']['campaign'] = $_SESSION[LEAD_TRACK_SESSION_KEY_FILTER];
+    $id_selected_campaign = $form_state['filters']['campaign'];
+    $res_urls = _lead_track_urls_from_campaign($id_selected_campaign);
+  }
+
+  $form['pager'] = null;
+
+  //H1 title
+  $prefix = "";
+  $suffix = "";
+  $form['form_container'] = array(
+    '#markup' => '<div id="container_dashboard">',
+    '#weight' => 1,
+    '#attached' => array('css' => array(drupal_get_path('module', 'lead_track') . '/lead_track.css')),
+  );
+
+  /*
+   * Filter Form part - START
+   */
+
+  //get all the campaigns from the database
+  $res = _lead_track_campaigns();
+  $result_campaign = $res->fetchAll();
+  $campaigns = array();
+
+  $mainTitle = 'Lead Track Dashboard';
+  foreach ($result_campaign as $campaign) {
+    $campaigns[$campaign->cid] = $campaign->name;
+
+    if ($id_selected_campaign == $campaign->cid) {
+      $mainTitle = 'Lead Track Dashboard > Campaign : ' . $campaign->name;
+    }
+  }
+
+  drupal_set_title(t($mainTitle));
+
+
+  $form['filter'] = array(
+    '#type' => 'fieldset',
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    '#title' => t('Filter option')
+  );
+
+  //Select campaign
+  $prefix = "<div id='container_filter'><h2>Filter</h2>";
+  $form['filter']['filter_campaign'] = array(
+    '#type' => 'select',
+    '#title' => t('Campaign'),
+    '#options' => $campaigns,
+    '#default_value' => '',
+    '#description' => t('Select the campaign for your new short url'),
+    '#weight' => 2,
+    '#prefix' => $prefix,
+    '#empty_value' => '',
+  );
+  $form['filter']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Filter'),
+    '#weight' => 3,
+    '#suffix' => $suffix
+  );
+
+  /*
+   * Filter Form part - END
+   */
+
+  /*
+   * GraphView part - START
+   */
+
+  //Prepare data for charts
+  $graphViewData = new stdClass();
+  $pieViewData = new stdClass();
+
+
+  $cols = array();
+
+  $rows = array();
+
+  $rows_pie = array();
+
+  if ($id_selected_campaign == 0) {
+    //We show the general column chart with all the campaigns
+
+    $graphViewData->isSelectedCampaign = FALSE;
+
+    $col1_id = 'campaing_name';
+    $col1_label = 'Campaign Name';
+
+    $reverse_result_campaign = array_reverse($result_campaign);
+
+    foreach ($reverse_result_campaign as $campaign) {
+
+      $campaign_urls = _lead_track_urls_from_campaign($campaign->cid);
+
+      $campaign_total_visits = 0;
+      foreach ($campaign_urls as $url) {
+        $campaign_total_visits += $url->visits;
+      }
+
+      $row_values = array();
+      $row_values_pie = array();
+
+      //Value for column_1
+      $row_value = new stdClass();
+      $row_value->v = $campaign->name;
+      $row_values[] = $row_value;
+      $row_values_pie[] = $row_value;
+
+      //Value for column_2
+      $row_value = new stdClass();
+      $row_value->v = intval($campaign_total_visits);
+      //Format the value
+      $row_value->f = $campaign_total_visits . ' (' . _lead_track_format_percentage($campaign->size, $campaign_total_visits) . ')';
+      $row_values[] = $row_value;
+      $row_values_pie[] = $row_value;
+
+      //Value for column_label
+      $row_value = new stdClass();
+      $row_value->v = intval($campaign_total_visits);
+      $row_values[] = $row_value;
+
+      $row = new stdClass();
+      $row->c = $row_values;
+      $rows[] = $row;
+
+      $row = new stdClass();
+      $row->c = $row_values_pie;
+      $rows_pie[] = $row;
+    }
+
+    //Personal function to order campaigns by count of visits
+    usort($rows, "orderCampaignRows");
+
+    $graphViewData->options = ',seriesType:"bars",series:{0:{targetAxisIndex: 0, color: CONFIG.color.visit} }';
+    $pieViewData->options = '}';
+  }
+  else {
+    //We show data for the selected campaign
+
+    $graphViewData->isSelectedCampaign = TRUE;
+
+    $col1_id = 'url_name';
+    $col1_label = 'Url';
+
+    $campaign_res = _lead_track_campaign_by_id(intval($form_state['filters']['campaign']));
+    $campaign = $campaign_res->fetchAssoc();
+
+    if ($campaign['size'] > 0) {
+      $column_4 = new stdClass();
+      $column_4->id = 'visit_campaign';
+      $column_4->label = 'Visits/Campaign Size (Bar)';
+      $column_4->type = 'number';
+    }
+
+    $total_visit_campaign_res = _lead_track_total_visit_campaign_by_id($id_selected_campaign);
+    $total_visit_campaign = $total_visit_campaign_res->fetchAssoc();
+
+    foreach ($res_urls as $url) {
+
+      $row_values = array();
+      $row_values_pie = array();
+
+      //Url name
+      $row_value = new stdClass();
+      $row_value->v = $url->analytics_content;
+      $row_values[] = $row_value;
+      $row_values_pie[] = $row_value;
+
+      //Count of visits on 1st axe (Total visits)
+      $row_value = new stdClass();
+      $row_value->v = intval($url->visits);
+      //Format the value
+      $row_value->f = $url->visits . ' (' . _lead_track_format_percentage($campaign['size'], $url->visits) . ')';
+      $row_values[] = $row_value;
+
+
+      //Pie special value
+      $row_value = new stdClass();
+      $row_value->v = intval($url->visits);
+      $row_values_pie[] = $row_value;
+
+      //If campaign size is not defined, the data related to it is not shown
+      if ($campaign['size'] > 0) {
+
+        //Campaign Size
+        $row_value = new stdClass();
+        $row_value->v = intval($campaign['size']);
+        $row_values[] = $row_value;
+
+
+        //Count of visits on 2nd axe (campaign size)
+        $row_value = new stdClass();
+        $row_value->v = intval($url->visits);
+        $row_value->f = _lead_track_format_percentage($campaign['size'], $url->visits);
+        $row_values[] = $row_value;
+      }
+
+      //Value for column_label
+      $row_value = new stdClass();
+      $row_value->v = intval($url->visits);
+      $row_values[] = $row_value;
+
+
+      $row = new stdClass();
+      $row->c = $row_values;
+      $rows[] = $row;
+
+      $row = new stdClass();
+      $row->c = $row_values_pie;
+      $rows_pie[] = $row;
+    }
+
+    //Personal function to order campaigns by count of visits
+    usort($rows, "orderCampaignRows");
+
+    $graphViewData->options = ',seriesType:"bars",series:{0:{targetAxisIndex: 0, color: CONFIG.color.visit}, 1:{type:"line", targetAxisIndex: 1, color: "red"}' . (($campaign['size'] > 0) ? ',2:{type:"bar", targetAxisIndex: 1, color: "red"}}' : '}');
+    $pieViewData->options = '}';
+  }
+
+  $column_1 = new stdClass();
+  $column_1->id = $col1_id;
+  $column_1->label = $col1_label;
+  $column_1->type = 'string';
+  $cols[] = $column_1;
+
+  $column_2 = new stdClass();
+  $column_2->id = 'total_visits';
+  $column_2->label = 'Total Visits';
+  $column_2->type = 'number';
+  $cols[] = $column_2;
+
+  if ($id_selected_campaign > 0 && $campaign['size'] > 0) {
+    $column_3 = new stdClass();
+    $column_3->id = 'campaing_size';
+    $column_3->label = 'Campaign Size';
+    $column_3->type = 'number';
+    $cols[] = $column_3;
+  }
+
+  if (isset($column_4)) {
+
+    $cols[] = $column_4;
+
+    //Update the legend
+    $column_3->label .= ' (line)';
+    $cols[2] = $column_3;
+  }
+
+  $column_label = new stdClass();
+  $column_label->type = 'number';
+  $column_label->role = 'annotation';
+  $cols[] = $column_label;
+
+  $cols = json_encode($cols);
+  $graphViewData->cols = $cols;
+
+  $rows = json_encode($rows);
+  $graphViewData->rows = $rows;
+
+  $graphsData = new stdClass();
+  $graphsData->graph = $graphViewData;
+
+
+
+  //Data for the PIE View
+  //Reset $cols
+  $cols = array();
+
+  //2 Columns
+  $column_1 = new stdClass();
+  $column_1->id = $col1_id;
+  $column_1->label = $col1_label;
+  $column_1->type = 'string';
+  $cols[] = $column_1;
+
+  $column_2 = new stdClass();
+  $column_2->id = 'total_visits';
+  $column_2->label = 'Total Visits';
+  $column_2->type = 'number';
+  $cols[] = $column_2;
+
+  //Rows
+  $cols = json_encode($cols);
+  $pieViewData->cols = $cols;
+
+  $rows_pie = json_encode($rows_pie);
+  $pieViewData->rows = $rows_pie;
+  $graphsData->pie = $pieViewData;
+
+
+  $form['graphview'] = array(
+    '#markup' => theme_lead_track_graphview(array('data' => $graphsData)),
+    '#weight' => 5,
+  );
+
+  /*
+   * GraphView part - END
+   */
+
+
+  /*
+   * Table/List part - START
+   */
+  //header of the table/list
+  $header = array(
+    array('data' => 'Campaign', 'field' => 'c.name'),
+    array('data' => 'Created', 'field' => 'c.created'),
+    array('data' => 'Link name', 'field' => 'u.analytics_content'),
+    array('data' => 'Short url', 'field' => 'u.slug'),
+    array('data' => 'Destination', 'field' => 'u.url_base'),
+    array('data' => 'Visits', 'field' => 'u.visits', 'sort' => 'desc'),
+    array('data' => 'Campaign Size', 'field' => 'c.size'),
+    array('data' => 'Visits/Size', 'field' => 'percent')
+  );
+
+  //Use Database API to retrieve data
+  $query = db_select(CONST_SQL_TABLE_URL, 'u');
+  $query->leftJoin(CONST_SQL_TABLE_CAMPAIGN, 'c', 'u.cid = c.cid');
+  $query->fields('u', array('uid', 'slug', 'url_base', 'visits', 'created', 'analytics_medium', 'analytics_source', 'analytics_content', 'cid'));
+  $query->fields('c', array('cid'));
+  $query->addField('c', 'name', 'campaign_name');
+  $query->addField('c', 'created', 'campaign_created');
+  $query->addField('c', 'size', 'campaign_size');
+  $query->addField('c', 'ga_event_disable', 'campaign_ga_event_disable');
+  $query->addField('c', 'ga_event_value', 'campaign_ga_event_value');
+  $query->addField('c', 'ga_pageview_disable', 'campaign_ga_pageview_disable');
+  $query->addField('c', 'sf_enable', 'campaign_sf_enable');
+  $query->addField('c', 'sf_lead_source', 'campaign_sf_lead_source');
+  $query->addExpression('(c.size/u.visits)', 'percent');
+
+  $query = ($id_selected_campaign != 0) ? $query->condition('c.cid', $id_selected_campaign) : $query;
+
+  $res_urls = $query->extend('TableSort')->orderByHeader($header)->extend('PagerDefault')->limit(10)->execute();
+
+  //Iterate over the result set and format as table row.
+  $small_row_width = '5%';
+  $medium_row_width = '10%';
+  $big_row_width = '25%';
+  $rows = array();
+  foreach ($res_urls as $url) {
+
+    $url->url_redirection = _lead_track_generate_url_redirection($url);
+
+    $rows[] = array('data' =>
+      array(
+        array('data' => l($url->campaign_name, _lead_track_generate_url_admin(CONST_ADMIN_URL_CAMPAIGNS_CAMPAIGN, array('campaign_id' => $url->cid))), 'style' => 'word-break:break-all;'),
+        array('data' => date('m/d/Y H:i:s', $url->created), 'style' => 'word-break:break-all;'),
+        array('data' => $url->analytics_content, 'style' => 'word-break:break-all;'),
+        array('data' => '<a href="#" onclick="javascript:copyToClipboard(\'' . _lead_track_format_url($url->slug, urlencode($url->analytics_content)) . '\');">' . _lead_track_format_url($url->slug, urlencode($url->analytics_content)) . '</a>', 'style' => 'word-break:break-all;'),
+        array('data' => $url->url_redirection . '&nbsp;<a href=\'' . $url->url_base . '\'>(&rarr;)</a>', 'style' => 'word-break:break-all;'),
+        array('data' => $url->visits, 'style' => 'word-break:break-all;'),
+        array('data' => $url->campaign_size, 'style' => 'word-break:break-all;'),
+        array('data' => _lead_track_format_percentage($url->campaign_size, $url->visits), 'style' => 'word-break:break-all;'),
+      ), 'no_striping' => FALSE);
+  }//
+  //Table part
+  $prefix = "<div id='container_listview'><h2>The ListView</h2>";
+  $suffix = "</div></div>";
+
+  $empty_msg = (empty($campaigns)) ? t('No campaign created yet. ') . l('Create a new campaign...', 'admin/lead_track/campaign/create', array()) : t('No short urls for this campaign yet. ') . l('Create a new short url for this campaign...', 'admin/lead_track/url/create', array('query' => array('id_campaign' => $id_selected_campaign)));
+
+  //Use the Drupal Api to render the form into our page
+  $form['table'] = array(
+    '#theme' => 'table',
+    '#header' => $header,
+    '#rows' => $rows,
+    '#empty' => $empty_msg,
+    '#sticky' => TRUE,
+    '#prefix' => $prefix,
+    '#suffix' => $suffix,
+    '#weight' => 6,
+  );
+
+  $form['pager'] = array(
+    '#markup' => theme('pager'),
+    '#weight' => 7
+  );
+
+  /*
+   * Table/List part - END
+   */
+
+  return $form;
+}
+
+/**
+ * Filter the data shown into the dashboard
+ *
+ * @param array $node
+ *
+ * @param array $form_state
+ * 	Where the form values are stored
+ *
+ * @return nothing
+ *
+ * @see lead_track_form_dashboard_page()
+ */
+function lead_track_form_dashboard_page_submit($node, &$form_state) {
+
+  if (empty($form_state['values']['filter_campaign'])) {
+    $_SESSION[LEAD_TRACK_SESSION_KEY_FILTER] = null;
+  }
+  else if ($form_state['values']['filter_campaign'] != '') {
+
+    if ($form_state['value']['filter_campaign'] != $_SESSION[LEAD_TRACK_SESSION_KEY_FILTER]) {
+      //TODO reset pager
+    }
+    $_SESSION[LEAD_TRACK_SESSION_KEY_FILTER] = $form_state['values']['filter_campaign'];
+  }
+  else {
+    $_SESSION[LEAD_TRACK_SESSION_KEY_FILTER] = null;
+  }
+  $form_state['rebuild'] = TRUE;
+}
+
+/**
+ * Returns the graphview using the template lead_track.graphview.tpl.php
+ *
+ * @param array $variables
+ * 	An array containing the data to send to the template
+ *
+ * @return html
+ * 	The data integrated into the template
+ *
+ */
+function theme_lead_track_graphview($variables) {
+  $data = $variables['data'];
+
+  $variables = array(
+    'data' => $data,
+  );
+  $output = theme('lead_track_graphview', $variables);
+  return $output;
+}
+
+/**
+ * Returns the User Tool view using the template lead_track.user_tool.tpl.php
+ *
+ * @param array $variables
+ * 	An array containing the data to send to the template
+ *
+ * @return html
+ * 	The data integrated into the template
+ *
+ */
+function theme_lead_track_user_tool($variables) {
+  $data = $variables['data'];
+
+  $variables = array(
+    'data' => $data,
+  );
+  $output = theme('lead_track_user_tool', $variables);
+  return $output;
+}
+
+/**
+ * Returns the view using the template lead_track.new_dashboard.tpl.php
+ *
+ * @param array $variables
+ * 	An array containing the data to send to the template
+ *
+ * @return html
+ * 	The data integrated into the template
+ *
+ */
+function theme_lead_track_new_dashboard($variables) {
+  $data = $variables['data'];
+
+  $variables = array(
+    'data' => $data,
+  );
+  $output = theme('lead_track_new_dashboard', $variables);
+  return $output;
+}
+
+function theme_lead_track_campaign($variables) {
+  $data = $variables['data'];
+
+  $variables = array(
+    'data' => $data,
+  );
+  $output = theme('lead_track_campaign', $variables);
+  return $output;
+}
+
+function theme_lead_track_url($variables) {
+  $data = $variables['data'];
+
+  $variables = array(
+    'data' => $data,
+  );
+  $output = theme('lead_track_url', $variables);
+  return $output;
+}
+
+function _lead_track_autocomplete($table, $column_name, $string) {
+  $matches = array();
+  $return = array();
+
+  if ($table == CONST_SQL_TABLE_URL) {
+    $return = _lead_track_url_column($column_name, $string);
+  }
+
+  // add matches to $matches  
+  foreach ($return as $row) {
+    $matches[$row->{$column_name}] = check_plain($row->{$column_name});
+  }
+
+  // return for JS
+  drupal_json_output($matches);
+}

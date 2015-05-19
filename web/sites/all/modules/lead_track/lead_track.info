@@ -1,0 +1,5 @@
+name = Lead Track
+description = Create short url composed of the email analytics tracking parameters.
+core = 7.x
+configure = admin/config/lead_track
+dependencies[] = entity
